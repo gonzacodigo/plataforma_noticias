@@ -1,0 +1,15 @@
+<h1>NOTICIAS</h1>
+<ul>
+    {% for p in noticias %}
+    
+    <li> {{p.titulo}}</li>
+    <li> {{p.descripcion}}</li>
+    <li> {{p.portada}}</li>
+    <li> {{p.categoria}}</li>
+    <li> {{p.medio}}</li>
+    <li> {{p.visitas}}</li>
+    <li> {{p.url}}</li>
+    <p> </p>
+        
+    {% endfor %}
+</ul> 

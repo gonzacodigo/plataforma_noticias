@@ -35,9 +35,14 @@ DJANGO_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #local apps
+    'applications.noticia',
+    'applications.medio',
+    'applications.categoria',
 )
 
 LOCAL_APPS = (
+    'rest_framework',
 )
 
 THIRD_PARTY_APPS = (
