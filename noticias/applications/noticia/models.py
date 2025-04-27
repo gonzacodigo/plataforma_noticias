@@ -6,7 +6,7 @@ class Noticia(models.Model):
     titulo = models.CharField(max_length=500)
     descripcion = models.TextField()
     contenido = models.TextField(default="Texto por defecto")
-    fecha = models.DateTimeField('Fecha de publicación')
+    fecha = models.DateTimeField(("Fecha"), auto_now=False, auto_now_add=False)
     portada = models.URLField(max_length=500, blank=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     medio = models.ForeignKey(Medio, on_delete=models.CASCADE)
