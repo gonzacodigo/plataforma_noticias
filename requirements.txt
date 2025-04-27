@@ -1,0 +1,9 @@
+Django>=4.0,<5.0
+requests>=2.26.0,<3.0
+beautifulsoup4>=4.10.0,<5.0
+pytz>=2021.1,<2022.0
+django-environ>=0.8.0,<1.0
+unipath
+djangorestframework
+psycopg2
+
