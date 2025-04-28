@@ -14,11 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+app_name = "noticia_app"
 
 from django.urls import path
 from .views import NoticiasInfobaeAPIView
-
+from . import views 
 urlpatterns = [
+        path('',
+         views.List_all_noticiasListView.as_view(),
+         name='inicio'
+         ),
+    path('noticia-categoria/', views.ListNoticiaCategoria.as_view(), name='noticia_categoria'),
     path('api/noticias/infobae/', NoticiasInfobaeAPIView.as_view(), name='noticias-infobae'),
 ]
 

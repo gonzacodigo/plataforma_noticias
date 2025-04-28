@@ -1,6 +1,8 @@
 from django.contrib import admin
+from .models import Noticia, Categoria
 
-# Register your models here.
-
-from .models import Noticia
+# Registrar el modelo Noticia
 admin.site.register(Noticia)
+
+# Registrar el modelo Categoria
+admin.site.register(Categoria)
