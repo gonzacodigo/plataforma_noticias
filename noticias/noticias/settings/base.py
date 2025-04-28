@@ -38,7 +38,6 @@ DJANGO_APPS = (
     #local apps
     'applications.noticia',
     'applications.medio',
-    'applications.categoria',
 )
 
 LOCAL_APPS = (

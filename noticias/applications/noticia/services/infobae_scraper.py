@@ -8,13 +8,12 @@ import pytz
 from django.utils import timezone as django_timezone
 
 # Importaciones de modelos de Django
-from applications.noticia.models import Noticia
+from applications.noticia.models import Noticia, Categoria
 from applications.medio.models import Medio
-from applications.categoria.models import Categoria
 
 # Definición de cache para evitar múltiples solicitudes a Infobae
 cache = {}
-CACHE_DURATION = 300  # 5 minutos en segundos
+CACHE_DURATION = 5  # 5 minutos en segundos
 
 def scrape_infobae():
     # Verificar si existe información cacheada y si sigue vigente

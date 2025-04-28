@@ -1,20 +1,33 @@
-{% load static %}
+{% load static %}  <!-- Corregido -->
 <!DOCTYPE html>
-<html lang="es-MX">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}">
-  {% block css %}{% endblock css %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/foundation.css' %}">
+    <title>{% block title %} {% endblock title %}</title>
 </head>
 <body>
-
-  {% block content %}
-  {% endblock content %}
-
-  {% block js %}{% endblock js %}
-
-  <script src="{% static 'js/app.js' %}"></script>
+    
+    {% block content %}
+        
+    {% endblock content %}
+        
+ <!-- JavaScript para Acordeones -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const buttons = document.querySelectorAll(".accordion-button");
+        buttons.forEach(function(button) {
+            button.addEventListener("click", function() {
+                const content = button.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        });
+    });
+    </script>   
 </body>
 </html>
