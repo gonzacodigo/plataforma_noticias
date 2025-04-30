@@ -11,7 +11,7 @@ class Categoria(models.Model):
     objects = CategoriaManager()
 
     def __str__(self):
-        return str(self.id) + ' - ' + self.nombre
+        return self.nombre.upper()
 
 class Noticia(models.Model):
     titulo = models.CharField(max_length=500)
