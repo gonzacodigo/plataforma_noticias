@@ -1,3 +1,4 @@
+from django.urls import reverse_lazy
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,7 +14,7 @@ class indexViews(TemplateView):
 class NoticiasInfobaeAPIView(APIView):
     def get(self, request):
         data = scrape_infobae()
-
+            # Redirección tras la creación exitosa
         if isinstance(data, tuple):  # Error handling (data, status_code)
             return Response(data[0], status=data[1])
 
@@ -24,6 +25,7 @@ class List_all_noticiasListView(ListView):
         model = Noticia
         context_object_name = 'noticias'
         template_name = 'noticia/noticia_list.html'
+        paginate_by = 8  # Se establece la paginación en 5 empleados por página
 
         def get_queryset(self):
             palabra_clave = self.request.GET.get('kword', '').strip()
@@ -43,8 +45,10 @@ class List_all_noticiasListView(ListView):
 
 class ListNoticiaCategoria(ListView):
     model = Noticia
-    context_object_name = 'lista_noticia_categoria'
+    context_object_name = 'noticias'
     template_name = 'noticia/lista_noticia_categoria.html'
+    paginate_by = 8  # Se establece la paginación en 5 empleados por página
+
 
     def get_queryset(self):
         categorias = self.request.GET.getlist('categorias')

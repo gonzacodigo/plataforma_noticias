@@ -1,138 +1,116 @@
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}PÁGINA LISTA EMPLEADOS{% endblock title %}
-
-{% block content %}
+{% extends "base.html" %} {% load static %} {% block title %}PÁGINA LISTA
+EMPLEADOS{% endblock title %} {% block content %} 
 {% include 'includes/header.html' %}
-
-<h1 style="
-    text-align: center; 
-    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-    font-size: 2.8em; 
-    margin-top: 40px; 
-    margin-bottom: 20px; 
-    color: #222;
-    letter-spacing: 1px;">
-    PLATAFORMA DE NOTICIAS
-</h1>
-
-<section style="
-    max-width: 1000px; 
-    margin: 40px auto; 
-    padding: 30px; 
-    background-color: #ffffff; 
-    border-radius: 16px; 
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    gap: 20px;
-">
-
-    <form method="get" style="
-        width: 100%; 
-        display: flex; 
-        flex-wrap: wrap; 
-        gap: 15px; 
-        justify-content: center; 
-        align-items: center;">
-        
-        <input type="text" id="kword" name="kword" placeholder="Ingrese título..." 
-            style="flex: 1 1 250px; min-width: 220px; padding: 12px 15px; border: 1px solid #ccc; border-radius: 10px; font-size: 1em;">
-        
-        <input type="date" name="fecha1" id="fecha1" 
-            style="flex: 1 1 180px; padding: 12px 15px; border: 1px solid #ccc; border-radius: 10px; font-size: 1em;">
-        
-        <input type="date" name="fecha2" id="fecha2" 
-            style="flex: 1 1 180px; padding: 12px 15px; border: 1px solid #ccc; border-radius: 10px; font-size: 1em;">
-        
-        <button type="submit" 
-            style="padding: 12px 24px; background-color: #CE00A3; color: #fff; border: none; border-radius: 10px; font-size: 1em; cursor: pointer; transition: background-color 0.3s;">
-            Consultar
-        </button>
-    </form>
-
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'noticia_app:noticia_categoria' %}" 
-           style="display: inline-block; padding: 12px 24px; background-color: #CE00A3; color: #fff; text-decoration: none; border-radius: 10px; font-size: 1em; transition: background-color 0.3s;">
-            FILTRAR POR CATEGORÍA
-        </a>
-    </div>
-
-</section>
-
-<div style="
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 30px; 
-    justify-content: center; 
-    margin: 60px auto; 
-    max-width: 1400px;
-">
-    {% for p in noticias %}
-    <div style="
-        border: 1px solid #e0e0e0; 
-        border-radius: 16px; 
-        padding: 24px; 
-        width: 320px; 
-        background: #fff; 
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); 
-        transition: transform 0.3s, box-shadow 0.3s; 
-        font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    "
-    onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.15)';" 
-    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 18px rgba(0,0,0,0.1)';">
-
-        <p style="font-size: 0.9em; color: #777; margin-bottom: 8px;">
-            <strong>Fecha de publicación:</strong> {{ p.fecha }}:00 hs
-        </p>
-
-        <p style="font-size: 0.9em; color: #555; margin-bottom: 12px;">
-            <strong>Categoría:</strong> {{ p.categoria }}
-        </p>
-
-        <h3 style="font-size: 1.5em; color: #222; margin-bottom: 15px; font-weight: 600;">{{ p.titulo }}</h3>
-
-        <img src="{{ p.portada }}" alt="Portada" style="width: 100%; height: auto; border-radius: 12px; margin-bottom: 20px;">
-
-        <button class="accordion-button" 
-            style="margin-top: 10px; width: 100%; background-color: #CE00A3; color: white; border: none; padding: 12px; border-radius: 10px; font-size: 1em; cursor: pointer; transition: background-color 0.3s;">
-            Mostrar / Ocultar Detalles
-        </button>
-
-        <div class="accordion-content" style="display: none; margin-top: 20px; font-size: 0.95em; color: #555;">
-            <p><strong>Descripción:</strong> {{ p.descripcion }}</p>
-            <p><strong>Medio:</strong> {{ p.medio }}</p>
-            <p><strong>Visitas:</strong> {{ p.visitas }}</p>
-            <p><strong>Contenido:</strong> {{ p.contenido }}</p>
-            <p style="margin-top: 15px;">
-                <a href="{{ p.url }}" target="_blank" 
-                    style="padding: 10px 16px; background-color: #CE00A3; color: white; text-decoration: none; border-radius: 8px; display: inline-block;">
-                    Leer más
-                </a>
-            </p>
-        </div>
-
-    </div>
-    {% endfor %}
+<div class="div_foto_perfil" style="display: flex; justify-content: center;">
+  <img
+    src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
+    alt="Logo de Desenchufadas"
+    style="margin-top: 32px;"
+  />
 </div>
+<h1
+  style="
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5em;
+    margin-top: 20px;
+    color: white;
+  "
+>
+  PLATAFORMA DE MEDIOS DIGITALES
+</h1>
+<h3
+  style="
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5em;
+    margin-top: 20px;
+    color: white;
+  "
+>
+  BUSCAR NOTICIA
+</h3>
 
-<script>
-// Simple JS para el botón "Mostrar/Ocultar"
-document.addEventListener('DOMContentLoaded', function() {
-    const buttons = document.querySelectorAll('.accordion-button');
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            const content = this.nextElementSibling;
-            if (content.style.display === 'block') {
-                content.style.display = 'none';
-            } else {
-                content.style.display = 'block';
-            }
-        });
-    });
-});
-</script>
+<section
+  style="
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  "
+>
+  <form
+    method="get"
+    style="
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+    "
+  >
+    <input
+      type="text"
+      id="kword"
+      name="kword"
+      placeholder="Ingrese título..."
+      style="
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1em;
+      "
+    />
+    <input
+      type="date"
+      name="fecha1"
+      id="fecha1"
+      style="
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1em;
+      "
+    />
+    <input
+      type="date"
+      name="fecha2"
+      id="fecha2"
+      style="
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1em;
+      "
+    />
+    <button
+      type="submit"
+      style="
+        padding: 10px 20px;
+        background-color: #ce00a3;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      "
+    >
+      Consultar
+    </button>
+  </form>
+</section>
+<div
+  style="
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 40px;
+  "
+>
+<div id="mensaje">Cargando noticias...</div>
 
-{% endblock content %}
+</div> {% endblock content %}

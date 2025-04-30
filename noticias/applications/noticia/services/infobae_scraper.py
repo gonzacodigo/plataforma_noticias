@@ -13,7 +13,7 @@ from applications.medio.models import Medio
 
 # Definición de cache para evitar múltiples solicitudes a Infobae
 cache = {}
-CACHE_DURATION = 5  # 5 minutos en segundos
+CACHE_DURATION = 300 # 5 minutos en segundos
 
 def scrape_infobae():
     # Verificar si existe información cacheada y si sigue vigente
