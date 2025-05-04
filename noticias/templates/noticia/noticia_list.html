@@ -1,11 +1,13 @@
-{% extends "base.html" %} {% load static %} {% block title %}PÁGINA LISTA
-EMPLEADOS{% endblock title %} {% block content %} 
+{% extends "base.html" %}
+{% load static %}
+{% block title %}PÁGINA LISTA EMPLEADOS{% endblock title %}
+{% block content %}
 {% include 'includes/header.html' %}
-<div class="div_foto_perfil" style="display: flex; justify-content: center;">
+<div class="div_foto_perfil" style="display: flex; justify-content: center">
   <img
     src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
     alt="Logo de Desenchufadas"
-    style="margin-top: 32px;"
+    style="margin-top: 32px"
   />
 </div>
 <h1
@@ -13,34 +15,37 @@ EMPLEADOS{% endblock title %} {% block content %}
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     font-size: 2.5em;
-    margin-top: 20px;
+    margin-top: 8px;
     color: white;
+    font-weight: bold;
   "
 >
   PLATAFORMA DE MEDIOS DIGITALES
 </h1>
-<h3
-  style="
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.5em;
-    margin-top: 20px;
-    color: white;
-  "
->
-  BUSCAR NOTICIA
-</h3>
-
 <section
   style="
     max-width: 800px;
     margin: 30px auto;
     padding: 20px;
     background-color: #f9f9f9;
+    background-color: rgba(0, 0, 0, 0.116);
     border-radius: 12px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   "
 >
+<h3
+  style="
+    background-color: rgba(0, 0, 0, 0.116);
+    padding: 16px;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5em;
+    margin-top: 8px;
+    color: white;
+    font-weight: bold;
+  "
+>
+  BUSCAR NOTICIAS
+</h3>
   <form
     method="get"
     style="
@@ -49,6 +54,8 @@ EMPLEADOS{% endblock title %} {% block content %}
       gap: 10px;
       justify-content: center;
       align-items: center;
+      background-color: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 32px;
     "
   >
     <input
@@ -98,7 +105,7 @@ EMPLEADOS{% endblock title %} {% block content %}
         transition: background-color 0.3s;
       "
     >
-      Consultar
+      CONSULTAR
     </button>
   </form>
 </section>
@@ -111,6 +118,14 @@ EMPLEADOS{% endblock title %} {% block content %}
     margin-top: 40px;
   "
 >
-<div id="mensaje">Cargando noticias...</div>
-
-</div> {% endblock content %}
+<div id="mensaje">
+  <div id="spinner" class="div_cargando" style="display:flex; justify-content: center; align-items: center;">
+  <i class="fas fa-spinner fa-spin" style="margin-right: 8px; color: white;">
+  </i>
+  <h5 style="font-family: 'Montserrat, sans-serif'; color: white">
+    Cargando noticias...
+  </h5>
+  </div>
+</div>
+</div>
+{% endblock content %}

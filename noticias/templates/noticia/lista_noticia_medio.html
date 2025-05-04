@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Noticias {% endblock title %}
+{% block content %}
+{% include 'includes/header.html' %}
+<div class="div_foto_perfil" style="display: flex; justify-content: center">
+  <img
+    src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
+    alt="Logo de Desenchufadas"
+    style="margin-top: 32px"
+  />
+</div>
+<h1
+  style="
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5em;
+    margin-top: 8px;
+    color: white;
+    font-weight: bold;
+  "
+>
+  PLATAFORMA DE MEDIOS DIGITALES
+</h1>
+<section
+  style="
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    background-color: rgba(0, 0, 0, 0.116);
+    border-radius: 12px;
+  "
+>
+<h3
+  style="
+    background-color: rgba(0, 0, 0, 0.116);
+    padding: 16px;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5em;
+    margin-top: 8px;
+    color: white;
+    font-weight: bold;
+  "
+>
+  BUSCAR NOTICIAS POR MEDIOS
+</h3>
+  <form
+    method="get"
+    style="
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      background-color: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 32px;
+    "
+  >
+    {% for field in form %}
+    <div
+      style="
+        flex: 1 1 45%;
+        min-width: 200px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      "
+    >
+      <label style="font-weight: bold; color: #333; font-size: 1em"
+        >{{ field.label }}</label
+      >
+      {{ field }}
+    </div>
+    {% endfor %}
+
+    <div style="width: 100%; text-align: center; margin-top: 20px">
+      <button
+        type="submit"
+        style="
+          padding: 12px 25px;
+          background-color: #ce00a3;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 1em;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        "
+      >
+      FILTRAR POR MEDIO
+      </button>
+    </div>
+  </form>
+</section> {% endblock content %}

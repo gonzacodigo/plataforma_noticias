@@ -3,11 +3,11 @@
 {% block title %} Noticias {% endblock title %}
 {% block content %}
 {% include 'includes/header.html' %}
-<div class="div_foto_perfil" style="display: flex; justify-content: center;">
+<div class="div_foto_perfil" style="display: flex; justify-content: center">
   <img
     src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
     alt="Logo de Desenchufadas"
-    style="margin-top: 32px;"
+    style="margin-top: 32px"
   />
 </div>
 <h1
@@ -15,34 +15,48 @@
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     font-size: 2.5em;
-    margin-top: 30px;
+    margin-top: 8px;
     color: white;
+    font-weight: bold;
   "
 >
-  FILTRAR NOTICIAS POR CATEGORÍA
+  PLATAFORMA DE MEDIOS DIGITALES
 </h1>
-<h3
-  style="
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.5em;
-    margin-top: 20px;
-    color: white;
-  "
->
-  BUSCAR NOTICIA
-</h3>
-
 <section
   style="
     max-width: 800px;
     margin: 30px auto;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color:rgb(255, 0, 200);
     border-radius: 12px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   "
 >
+<h3
+  style="
+    background-color: rgba(0, 0, 0, 0.22);
+    padding: 16px;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5em;
+    margin-top: 8px;
+    color: white;
+    font-weight: bold;
+  "
+>
+  BUSCAR NOTICIAS POR CATEGORIA
+</h3>
+  <form
+    method="get"
+    style="
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      background-color: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 32px;
+    "
+  >
   <form
     method="get"
     style="
@@ -84,7 +98,7 @@
           transition: background-color 0.3s;
         "
       >
-        Filtrar
+        FILTRAR POR CATEGORIA
       </button>
     </div>
   </form>

@@ -36,14 +36,12 @@ def scrape_infobae():
         noticias = soup.find_all('a', class_='story-card-ctn')
 
         # Obtener o crear el medio 'Infobae'
-        medio, _ = Medio.objects.get_or_create(nombre='Infobae')
+        medio, _ = Medio.objects.get_or_create(nombre='INFOBAE')
 
         for noticia in noticias:
             # Extraer el título
             title_tag = noticia.find('h2', class_="story-card-hl")
             # Extraer el párrafo (descripción)
-            parrafo_div = noticia.find('div', class_="story-card-info")
-            parrafo_tag = parrafo_div.find('h3', class_='story-card-deck') if parrafo_div else None
             # Extraer imagen
             imagen = noticia.find('img', class_="global-image")
             imagen_url = imagen['src'] if imagen and 'src' in imagen.attrs else None
@@ -55,7 +53,6 @@ def scrape_infobae():
                 continue
 
             title = title_tag.text.strip()
-            descripcion = parrafo_tag.text.strip() if parrafo_tag else ""
 
             # Evitar duplicar noticias
             if Noticia.objects.filter(titulo=title).exists():
@@ -79,9 +76,15 @@ def scrape_infobae():
 
             # Parsear el HTML del artículo
             soup_article = BeautifulSoup(article_response.text, 'html.parser')
+            article_header = soup_article.find('div', class_='article-header')
             article = soup_article.find('article', class_='article')
             if not article:
                 continue
+
+            parrafo_tag = article_header.find('h2', class_='article-subheadline text_align_left') if article_header else None
+            descripcion = parrafo_tag.text.strip() if parrafo_tag else ""
+
+
 
             # Extraer fecha de publicación
             date_tag = article.find('span', class_="sharebar-article-date")

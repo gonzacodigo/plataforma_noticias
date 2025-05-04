@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <title>{% block title %} {% endblock title %}</title>
   </head>
   <body style="background: linear-gradient(180deg, #38042F 0%, #8E0576 50%, #D201A5 100%);">
@@ -37,6 +37,7 @@
         <p style="font-size: 0.9em; color: #666; margin-bottom: 10px">
           <strong>Fecha de publicación:</strong> {{ p.fecha }}:00 hs
         </p>
+        <p><strong>Medio:</strong> {{ p.medio }}</p>
         <p><strong>Categoría:</strong> {{ p.categoria }}</p>
 
         <h4 style="
@@ -85,7 +86,6 @@
           "
         >
           <p><strong>Descripción:</strong> {{ p.descripcion }}</p>
-          <p><strong>Medio:</strong> {{ p.medio }}</p>
           <p><strong>Visitas:</strong> {{ p.visitas }}</p>
           <p><strong>Contenido:</strong> {{ p.contenido }}</p>
           <p style="margin-top: 10px">
@@ -143,15 +143,45 @@
           });
         });
       });
-          window.addEventListener('DOMContentLoaded', async () => {
-            try {
-              const res = await fetch('/api/noticias/infobae/')
-              const data = await res.json();
-              document.getElementById('mensaje').innerText = `NOTICIAS CARGADAS CORRECTAMENTE`;
-            } catch (error) {
-              document.getElementById('mensaje').innerText = 'Error al actualizar noticias automáticamente';
-            }
-          });
+      window.addEventListener('DOMContentLoaded', async () => {
+        const mensaje = document.getElementById('mensaje');
+        const spinner = document.getElementById('spinner');
+
+        // Si ya se hizo la recarga
+        if (localStorage.getItem('recargaHecha')) {
+          // Mostrar el mensaje fijo y ocultar el spinner
+          mensaje.innerHTML = '🚀 A TRABAJAR 👍';
+          mensaje.style.color = 'white';
+          mensaje.style.fontFamily = 'Montserrat, sans-serif';
+          spinner.style.display = 'none';
+
+          // Limpiar bandera para futuras cargas
+          localStorage.removeItem('recargaHecha');
+          return;
+        }
+
+        // Mostrar spinner mientras se cargan los datos
+        spinner.style.display = 'flex';
+
+        try {
+          const resInfobae = await fetch('/api/noticias/infobae/');
+          const resTn = await fetch('/api/noticias/tn/');
+          const resTelefe = await fetch('/api/noticias/telefe/');
+          await resInfobae.json();
+          await resTn.json();
+
+          // Guardar bandera y recargar
+          localStorage.setItem('recargaHecha', 'true');
+          location.reload();
+
+        } catch (error) {
+          console.error(error);
+          mensaje.innerText = 'Error al actualizar noticias automáticamente';
+          spinner.style.display = 'none';
+        }
+      });
+
+
     </script>
   </body>
 </html>
