@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}PÁGINA BUSCADOR IMAGENES{% endblock title %}
+{% block content %}
+{% include 'includes/header.html' %}
+<div class="div_foto_perfil" style="display: flex; justify-content: center">
+  <img
+    src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
+    alt="Logo de Desenchufadas"
+    style="margin-top: 32px"
+  />
+</div>
+<h1
+  style="
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5em;
+    margin-top: 8px;
+    color: white;
+    font-weight: bold;
+  "
+>
+  PLATAFORMA DE MEDIOS DIGITALES
+</h1>
+<section
+  style="
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    background-color: rgba(0, 0, 0, 0.116);
+    border-radius: 12px;
+  "
+>
+<h3
+  style="
+    background-color: rgba(0, 0, 0, 0.116);
+    padding: 16px;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5em;
+    margin-top: 8px;
+    color: white;
+    font-weight: bold;
+  "
+>
+BUSCADOR DE IMAGENES
+</h3>
+<style>
+    #___gcse_0{
+        width: 60%;
+        margin: auto;
+        padding: 16px;
+        border-radius: 16px;
+        background-color: #ce00a3;
+    }
+    .gcse-search {
+      width: 100%; /* O un ancho específico, como 600px */
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    
+    .gsc-control-cse {
+      font-family: Arial, sans-serif;
+      padding: 0;
+      border: none;
+    }
+    
+    .gsc-input-box {
+      height: 40px !important;
+    }
+    
+    input.gsc-input {
+      height: 25px !important;
+      font-size: 16px !important;
+    }
+    
+    .gsc-search-button {
+      height: 40px !important;
+    }
+    </style>
+    
+<script>
+    let script = document.createElement("script");
+    script.src = "https://cse.google.com/cse.js?cx=87467d5905d784a95"; // tu ID de motor de búsqueda
+    script.async = true;
+    document.head.appendChild(script); // Se agrega al <head>
+    
+    let inputBusquedaImagenes = document.createElement("div");
+    inputBusquedaImagenes.classList.add("gcse-search");
+    
+    // Agregamos el div al body o a un contenedor específico
+    document.body.appendChild(inputBusquedaImagenes);
+</script>
+    
+</section>
+{% endblock content %}

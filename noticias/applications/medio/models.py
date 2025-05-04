@@ -10,4 +10,4 @@ class Medio(models.Model):
         max_length=50
     )
     def __str__(self):
-        return str(self.id) + ' ' + str(self.nombre) 
+        return str(self.nombre) 

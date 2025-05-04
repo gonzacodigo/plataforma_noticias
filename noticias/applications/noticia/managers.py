@@ -17,11 +17,11 @@ class NoticiaManager(models.Manager):
     
     def listar_noticia_categoria(self, categoria_id):
         return self.filter(categoria__id=categoria_id).order_by('-fecha')
+    
+    def listar_noticia_medio(self, medio_id):
+        return self.filter(medio__id=medio_id).order_by('-fecha')
 
 
-class CategoriaManager(models.Manager):
-    #se llama a esta funcion
-    def categoria_autor(self, medios):
-        return self.filter(
-            categoria_noticia__medios__id = medios
-        ).distinct()
+    
+
+

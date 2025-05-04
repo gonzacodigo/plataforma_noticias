@@ -1,12 +1,14 @@
 {% load static %}  <!-- Corregido -->
 
 <div class="top-bar" style="background-color: black;">
-  <div class="top-bar-left">
+  <div class="top-bar-left" style="background-color: black;">
     <ul class="dropdown menu" data-dropdown-menu style="background-color: black; display: flex; align-items: center;">
-    <li class="menu-text" style="color: white; font-size: 2em;">Utilidades:</li>
-      <li><a href="{% url 'noticia_app:inicio' %}" style="color: white; background-color: #ce00a3; border-radius: 8px; margin-right: 8px; padding: 16px;">INICIO</a></li>
-      <li><a href="{% url 'noticia_app:noticia_categoria' %}" style="color: white; background-color: #ce00a3; border-radius: 8px; padding: 16px;">CATEGORIAS</a></li>
-    </ul>
+    <li class="menu-text" style="font-family: 'Montserrat', sans-serif; color: white; font-size: 2em;">Utilidades:</li>
+      <li><a href="{% url 'noticia_app:inicio' %}" style="font-family: 'Montserrat', sans-serif;color: white;font-weight: bold;  background-color: #ce00a3; border-radius: 0px; margin-right: 8px; padding: 8px;">INICIO</a></li>
+      <li><a href="{% url 'noticia_app:noticia_categoria' %}" style="font-family: 'Montserrat', sans-serif;color: white;font-weight: bold;  background-color: #ce00a3; border-radius: 0px; margin-right: 8px; padding: 8px;">CATEGORIA</a></li>
+      <li><a href="{% url 'noticia_app:noticia_medio' %}" style="font-family: 'Montserrat', sans-serif; color: white; font-weight: bold; background-color: #ce00a3; border-radius: 0px; margin-right: 8px; padding: 8px;">MEDIOS</a></li>
+      <li><a href="{% url 'noticia_app:instagram' %}" style="font-family: 'Montserrat', sans-serif; color: white; font-weight: bold; background-color: #ce00a3; border-radius: 0px; margin-right: 8px; padding: 8px;">INSTAGRAM</a></li>
+      <li><a href="{% url 'noticia_app:buscador_imagenes' %}" style="font-family: 'Montserrat', sans-serif; color: white; font-weight: bold; background-color: #ce00a3; border-radius: 0px; margin-right: 8px; padding: 8px;">BUSCADOR DE IMAGENES</a></li>
   </div>
 </div>
 

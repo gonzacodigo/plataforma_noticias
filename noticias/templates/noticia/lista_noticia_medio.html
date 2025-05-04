@@ -27,13 +27,14 @@
     max-width: 800px;
     margin: 30px auto;
     padding: 20px;
-    background-color:rgb(255, 0, 200);
+    background-color: #f9f9f9;
+    background-color: rgba(0, 0, 0, 0.116);
     border-radius: 12px;
   "
 >
 <h3
   style="
-    background-color: rgba(0, 0, 0, 0.22);
+    background-color: rgba(0, 0, 0, 0.116);
     padding: 16px;
     text-align: center;
     font-family: 'Montserrat', sans-serif;
@@ -43,7 +44,7 @@
     font-weight: bold;
   "
 >
-  BUSCAR NOTICIAS POR CATEGORIA
+  BUSCAR NOTICIAS POR MEDIOS
 </h3>
   <form
     method="get"
@@ -55,16 +56,6 @@
       align-items: center;
       background-color: 0px 4px 12px rgba(0, 0, 0, 0.1);
       padding: 32px;
-    "
-  >
-  <form
-    method="get"
-    style="
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      align-items: center;
     "
   >
     {% for field in form %}
@@ -98,7 +89,7 @@
           transition: background-color 0.3s;
         "
       >
-        FILTRAR POR CATEGORIA
+      FILTRAR POR MEDIO
       </button>
     </div>
   </form>

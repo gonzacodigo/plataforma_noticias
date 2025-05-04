@@ -17,14 +17,25 @@ Including another URLconf
 app_name = "noticia_app"
 
 from django.urls import path
-from .views import NoticiasInfobaeAPIView
+from .views import NoticiasInfobaeAPIView, NoticiasTnAPIView, NoticiasTelefeAPIView
 from . import views 
 urlpatterns = [
         path('',
          views.List_all_noticiasListView.as_view(),
          name='inicio'
          ),
+        path('instagram-views',
+         views.InstagramViews.as_view(),
+         name='instagram'
+         ),
+        path('buscador-imagenes',
+         views.Google_imagenes_Views.as_view(),
+         name='buscador_imagenes'
+         ),
     path('noticia-categoria/', views.ListNoticiaCategoria.as_view(), name='noticia_categoria'),
+    path('noticia-medio/', views.ListNoticiaMedios.as_view(), name='noticia_medio'),
     path('api/noticias/infobae/', NoticiasInfobaeAPIView.as_view(), name='noticias-infobae'),
+    path('api/noticias/tn/', NoticiasTnAPIView.as_view(), name='noticias-tn'),
+    path('api/noticias/telefe/', NoticiasTelefeAPIView.as_view(), name='noticias-telefe'),
 ]
 

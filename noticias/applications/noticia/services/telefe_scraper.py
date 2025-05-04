@@ -15,12 +15,12 @@ from applications.medio.models import Medio
 cache = {}
 CACHE_DURATION = 300 # 5 minutos en segundos
 
-def scrape_infobae():
+def scrape_telefe():
     # Verificar si existe información cacheada y si sigue vigente
-    if 'infobae_data' in cache and (time.time() - cache['infobae_data']['timestamp'] < CACHE_DURATION):
-        return cache['infobae_data']['data']
+    if 'telefe_data' in cache and (time.time() - cache['telefe_data']['timestamp'] < CACHE_DURATION):
+        return cache['telefe_data']['data']
 
-    url = "https://www.infobae.com/teleshow/"
+    url = "https://noticias.mitelefe.com/espectaculos"
     resultado = []
 
     with requests.Session() as session:
@@ -33,18 +33,34 @@ def scrape_infobae():
 
         # Parsear el HTML de la página
         soup = BeautifulSoup(response.text, 'html.parser')
-        noticias = soup.find_all('a', class_='story-card-ctn')
+        noticias = soup.find_all('a', class_='e-card-link')
+
+
 
         # Obtener o crear el medio 'Infobae'
-        medio, _ = Medio.objects.get_or_create(nombre='INFOBAE')
+        medio, _ = Medio.objects.get_or_create(nombre='TELEFE')
 
         for noticia in noticias:
             # Extraer el título
-            title_tag = noticia.find('h2', class_="story-card-hl")
-            # Extraer el párrafo (descripción)
+            title_tag = noticia.find('h2', class_="e-card-title")
+
             # Extraer imagen
-            imagen = noticia.find('img', class_="global-image")
-            imagen_url = imagen['src'] if imagen and 'src' in imagen.attrs else None
+            div_imagen = noticia.find('div', class_="e-card-img-container")
+            imagen_url = None
+
+            if div_imagen:
+                # Buscar la etiqueta img dentro del div
+                imagen = div_imagen.find('img', class_="e-card-img")
+                if imagen:
+                    # Obtener el 'src' o intentar extraer desde 'data-interchange'
+                    imagen_url = imagen['src'] if 'src' in imagen.attrs else None
+
+                    if not imagen_url and 'data-interchange' in imagen.attrs:
+                        # Extraer la URL del 'data-interchange'
+                        data_interchange = imagen['data-interchange']
+                        imagen_url = data_interchange.split(',')[
+                            0].strip().split('[')[1]
+                    
             # Extraer link de la noticia
             link_href = noticia['href'] if noticia and 'href' in noticia.attrs else None
 
@@ -60,7 +76,7 @@ def scrape_infobae():
 
             # Asegurarse que el link sea completo
             if not link_href.startswith('http'):
-                link_href = urljoin("https://www.infobae.com", link_href)
+                link_href = urljoin("https://noticias.mitelefe.com/espectaculos", link_href)
 
             # Categoría dinámica basada en el URL
             categoria_link = link_href.split("/")[3] if len(link_href.split("/")) > 3 else "General"
@@ -76,72 +92,67 @@ def scrape_infobae():
 
             # Parsear el HTML del artículo
             soup_article = BeautifulSoup(article_response.text, 'html.parser')
-            article_header = soup_article.find('div', class_='article-header')
-            article = soup_article.find('article', class_='article')
+            article = soup_article.find_all('article', class_='b-post')
+            
             if not article:
                 continue
 
-            parrafo_tag = article_header.find('h2', class_='article-subheadline text_align_left') if article_header else None
+            for article in article:
+                # Extraer el contenido de la noticia
+                parrafos = soup_article.find_all('div', class_="e-post-text")
+                contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
+                # Extraer el párrafo (descripción)
+                parrafo_tag = article.find('div', class_='e-post-subtitle') if article else None
+
             descripcion = parrafo_tag.text.strip() if parrafo_tag else ""
-
-
-
+                
             # Extraer fecha de publicación
-            date_tag = article.find('span', class_="sharebar-article-date")
+            date_tag = article.find('span', class_="e-post-time")
             date_text = date_tag.text.strip() if date_tag else None
-
-            # Limpiar la coma en la fecha
-            if date_text:
-                date_text = date_text.replace(",", "")
 
             # Procesar fecha y hora
             fecha_hora_obj = None
             if date_text:
                 try:
-                    partes = date_text.split(" ")
-                    if len(partes) >= 5:
-                        dia = partes[0]
-                        mes_texto = partes[1]
-                        anio = partes[2]
-                        hora_minuto = partes[3]
-                        ampm = partes[4]
+                    # Limpiar texto
+                    date_text = date_text.replace(",", "").replace("hs", "").strip()
+                    partes = date_text.split()
 
-                        # Diccionario de meses en español
-                        meses = {
-                            "Ene": "01", "Feb": "02", "Mar": "03", "Abr": "04", "May": "05",
-                            "Jun": "06", "Jul": "07", "Ago": "08", "Sep": "09", "Oct": "10",
-                            "Nov": "11", "Dic": "12"
-                        }
-                        # Buscar el número de mes
+                    # Diccionario de meses en español
+                    meses = {
+                        "enero": "01", "febrero": "02", "marzo": "03", "abril": "04", "mayo": "05",
+                        "junio": "06", "julio": "07", "agosto": "08", "septiembre": "09", "octubre": "10",
+                        "noviembre": "11", "diciembre": "12"
+                    }
+
+                    if len(partes) >= 3:
+                        dia = partes[0]
+                        mes_texto = partes[1].lower()
+                        anio = partes[2]
                         mes = meses.get(mes_texto, "01")
 
-                        # Armar fecha
-                        fecha_str = f"{anio}-{mes}-{dia}"
-
-                        # Ajustar hora según AM/PM
-                        hora, minuto = hora_minuto.split(":")
-                        if ampm.lower() == "p.m." and int(hora) != 12:
-                            hora = str(int(hora) + 12)
-                        elif ampm.lower() == "a.m." and int(hora) == 12:
+                        # Verificar si incluye hora
+                        if len(partes) >= 4:
+                            hora, minuto = partes[3].split(":")
+                        else:
                             hora = "00"
+                            minuto = "00"
 
-                        # Armar hora
-                        hora_str = f"{hora}:{minuto}"
-                        fecha_hora_str = f"{fecha_str} {hora_str}"
+                        fecha_hora_str = f"{anio}-{mes}-{dia} {hora}:{minuto}"
 
-                        # Crear objeto datetime con timezone de Buenos Aires
+                        zona_ar = pytz.timezone("America/Argentina/Buenos_Aires")
                         fecha_hora_obj = datetime.strptime(fecha_hora_str, "%Y-%m-%d %H:%M")
-                        fecha_hora_obj = pytz.timezone("America/Argentina/Buenos_Aires").localize(fecha_hora_obj)
+                        fecha_hora_obj = zona_ar.localize(fecha_hora_obj)
+                    else:
+                        print(f"⚠️ Fecha incompleta: {date_text}")
+                        fecha_hora_obj = django_timezone.now()
 
                 except Exception as e:
                     print(f"Error procesando fecha: {e}")
-                    fecha_hora_obj = django_timezone.now()  # Si falla algo, se usa la fecha y hora actuales
+                    fecha_hora_obj = django_timezone.now()
             else:
+                print("No hay date_text, usando fecha actual.")
                 fecha_hora_obj = django_timezone.now()
-
-            # Extraer el contenido de la noticia
-            parrafos = soup_article.find_all('p', class_="paragraph")
-            contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
 
             # Crear el objeto Noticia en la base de datos
             noticia_obj = Noticia.objects.create(
@@ -169,9 +180,10 @@ def scrape_infobae():
             })
 
     # Guardar resultados en cache
-    cache['infobae_data'] = {
+    cache['telefe_data'] = {
         'data': resultado,
         'timestamp': time.time()
     }
 
     return resultado
+
