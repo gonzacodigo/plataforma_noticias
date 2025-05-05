@@ -15,7 +15,7 @@ from applications.medio.models import Medio
 cache = {}
 CACHE_DURATION = 300 # 5 minutos en segundos
 
-def scrape_infobae():
+def scrape_infobae_show():
     # Verificar si existe información cacheada y si sigue vigente
     if 'infobae_data' in cache and (time.time() - cache['infobae_data']['timestamp'] < CACHE_DURATION):
         return cache['infobae_data']['data']

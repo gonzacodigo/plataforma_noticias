@@ -3,6 +3,8 @@
 {% block title %} Noticias {% endblock title %}
 {% block content %}
 {% include 'includes/header.html' %}
+
+
 <div class="div_foto_perfil" style="display: flex; justify-content: center">
   <img
     src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
@@ -32,20 +34,20 @@
     border-radius: 12px;
   "
 >
-<h3
-  style="
-    background-color: rgba(0, 0, 0, 0.116);
-    padding: 16px;
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.5em;
-    margin-top: 8px;
-    color: white;
-    font-weight: bold;
-  "
->
-  BUSCAR NOTICIAS POR MEDIOS
-</h3>
+  <h3
+    style="
+      background-color: rgba(0, 0, 0, 0.116);
+      padding: 16px;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.5em;
+      margin-top: 8px;
+      color: white;
+      font-weight: bold;
+    "
+  >
+    BUSCAR NOTICIAS POR MEDIOS
+  </h3>
   <form
     method="get"
     style="
@@ -58,6 +60,31 @@
       padding: 32px;
     "
   >
+    <style>
+      select {
+        padding: 10px 15px;
+        font-size: 1em;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: white;
+        color: #333;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        font-family: "Montserrat", sans-serif;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      select:focus {
+        border-color: #ce00a3;
+        box-shadow: 0 0 0 3px rgba(206, 0, 163, 0.2);
+        outline: none;
+      }
+
+      option {
+        padding: 8px;
+      }
+    </style>
+
     {% for field in form %}
     <div
       style="
@@ -89,8 +116,9 @@
           transition: background-color 0.3s;
         "
       >
-      FILTRAR POR MEDIO
+        FILTRAR POR MEDIO
       </button>
     </div>
   </form>
-</section> {% endblock content %}
+</section>
+{% endblock content %}

@@ -164,11 +164,16 @@
         spinner.style.display = 'flex';
 
         try {
-          const resInfobae = await fetch('/api/noticias/infobae/');
+          const resInfobaeShow = await fetch('api/noticias/infobae/show/');
+          const resInfobae = await fetch('api/noticias/infobae/');
           const resTn = await fetch('/api/noticias/tn/');
           const resTelefe = await fetch('/api/noticias/telefe/');
+          const restnshow = await fetch('/api/noticias/tn/show');
           await resInfobae.json();
+          await resInfobaeShow.json();
           await resTn.json();
+          await restnshow.json();
+          await resTelefe.json();
 
           // Guardar bandera y recargar
           localStorage.setItem('recargaHecha', 'true');
@@ -180,8 +185,6 @@
           spinner.style.display = 'none';
         }
       });
-
-
     </script>
   </body>
 </html>

@@ -3,9 +3,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.views.generic import TemplateView, ListView
-from .services.infobae_scraper import scrape_infobae
-from .services.tn_scraper import scrape_tn
-from .services.telefe_scraper import scrape_telefe
+from .services.infobae.infobae_scraper_show import scrape_infobae_show
+from .services.infobae.infobae_scraper_general import scrape_infobae_general
+from .services.tn.tn_scraper_general import scrape_tn_general
+from .services.tn.tn_scraper_show import scrape_tn_show
+from .services.telefe.telefe_scraper_show import scrape_telefe_show
+from .services.telefe.telefe_scraper_general import scrape_telefe_general
 from .models import Noticia
 from .forms import CategoriaForm
 from applications.medio.forms import MedioForm
@@ -18,9 +21,18 @@ class InstagramViews(TemplateView):
 class Google_imagenes_Views(TemplateView):
     template_name = 'google/buscador_imagenes.html'
     
+class NoticiasInfobaeShowAPIView(APIView):
+    def get(self, request):
+        data = scrape_infobae_show()
+            # Redirección tras la creación exitosa
+        if isinstance(data, tuple):  # Error handling (data, status_code)
+            return Response(data[0], status=data[1])
+
+        return Response(data, status=status.HTTP_200_OK)
+    
 class NoticiasInfobaeAPIView(APIView):
     def get(self, request):
-        data = scrape_infobae()
+        data = scrape_infobae_general()
             # Redirección tras la creación exitosa
         if isinstance(data, tuple):  # Error handling (data, status_code)
             return Response(data[0], status=data[1])
@@ -29,28 +41,49 @@ class NoticiasInfobaeAPIView(APIView):
     
 class NoticiasTnAPIView(APIView):
     def get(self, request):
-        data = scrape_tn()
+        data = scrape_tn_general()
             # Redirección tras la creación exitosa
         if isinstance(data, tuple):  # Error handling (data, status_code)
             return Response(data[0], status=data[1])
 
         return Response(data, status=status.HTTP_200_OK)
     
-class NoticiasTelefeAPIView(APIView):
+
+class NoticiasTnShowAPIView(APIView):
     def get(self, request):
-        data = scrape_telefe()
+        data = scrape_tn_show()
+            # Redirección tras la creación exitosa
+        if isinstance(data, tuple):  # Error handling (data, status_code)
+            return Response(data[0], status=data[1])
+
+        return Response(data, status=status.HTTP_200_OK)
+        
+    
+class NoticiasTelefeShowAPIView(APIView):
+    def get(self, request):
+        data = scrape_telefe_show()
             # Redirección tras la creación exitosa
         if isinstance(data, tuple):  # Error handling (data, status_code)
             return Response(data[0], status=data[1])
 
         return Response(data, status=status.HTTP_200_OK)
 
-# Vista que lista todos los empleados con paginación de 5 empleados por página
+
+class NoticiasTelefeAPIView(APIView):
+    def get(self, request):
+        data = scrape_telefe_general()
+            # Redirección tras la creación exitosa
+        if isinstance(data, tuple):  # Error handling (data, status_code)
+            return Response(data[0], status=data[1])
+
+        return Response(data, status=status.HTTP_200_OK)
+    
+# Vista que lista todos los empleados con paginación de 5 noticias por página
 class List_all_noticiasListView(ListView):
         model = Noticia
         context_object_name = 'noticias'
         template_name = 'noticia/noticia_list.html'
-        paginate_by = 30  # Se establece la paginación en 5 empleados por página
+        paginate_by = 30  # Se establece la paginación en 5 noticias por página
 
         def get_queryset(self):
             palabra_clave = self.request.GET.get('kword', '').strip()
@@ -73,7 +106,7 @@ class ListNoticiaCategoria(ListView):
     model = Noticia
     context_object_name = 'noticias'
     template_name = 'noticia/lista_noticia_categoria.html'
-    paginate_by = 30  # Se establece la paginación en 5 empleados por página
+    #paginate_by = 30  # Se establece la paginación en 5 noticias por página
 
 
     def get_queryset(self):
@@ -91,7 +124,7 @@ class ListNoticiaMedios(ListView):
     model = Noticia
     context_object_name = 'noticias'
     template_name = 'noticia/lista_noticia_medio.html'
-    paginate_by = 30
+    #paginate_by = 30
 
     def get_queryset(self):
         medio_id = self.request.GET.get('medio')

@@ -15,12 +15,12 @@ from applications.medio.models import Medio
 cache = {}
 CACHE_DURATION = 300 # 5 minutos en segundos
 
-def scrape_tn():
+def scrape_tn_general():
     # Verificar si existe información cacheada y si sigue vigente
     if 'tn_data' in cache and (time.time() - cache['tn_data']['timestamp'] < CACHE_DURATION):
         return cache['tn_data']['data']
 
-    url = "https://tn.com.ar/show"
+    url = "https://tn.com.ar/"
     resultado = []
 
     with requests.Session() as session:
@@ -33,33 +33,15 @@ def scrape_tn():
 
         # Parsear el HTML de la página
         soup = BeautifulSoup(response.text, 'html.parser')
-        noticias = soup.find_all('article', class_='card__container')
+        noticias = soup.find_all('div', class_='card__body')
+
 
         # Obtener o crear el medio 'Infobae'
         medio, _ = Medio.objects.get_or_create(nombre='TN')
 
         for noticia in noticias:
             # Extraer el título
-            title_tag = noticia.find('h2', class_="card__headline")
-
-
-            # Extraer imagen
-            div_imagen = noticia.find('picture', class_="responsive-image")
-            imagen_url = None
-
-            if div_imagen:
-                # Buscar la etiqueta img dentro del div
-                imagen = div_imagen.find('img', class_="image image_placeholder")
-
-                if imagen:
-                    # Obtener el 'src' o intentar extraer desde 'data-interchange'
-                    imagen_url = imagen['src'] if 'src' in imagen.attrs else None
-
-                    if not imagen_url and 'data-interchange' in imagen.attrs:
-                        # Extraer la URL del 'data-interchange'
-                        data_interchange = imagen['data-interchange']
-                        imagen_url = data_interchange.split(',')[
-                            0].strip().split('[')[1]
+            title_tag = noticia.find('h2', class_="card__headline font__display")
                     
             # Extraer link de la noticia
             link = noticia.find('a')
@@ -103,6 +85,29 @@ def scrape_tn():
                 contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
                 # Extraer el párrafo (descripción)
                 parrafo_tag = article.find('h2', class_='article__dropline font__body') if article else None
+                            # Extraer imagen
+                div_imagen = article.find('picture', class_="responsive-image")
+                imagen_url = None  # Valor por defecto
+
+                if div_imagen:
+                    # Buscar la etiqueta img con la clase más específica
+                    imagen = div_imagen.find('img', class_="width_full height_full article__lead-art-photo image_placeholder")
+                    
+                    if not imagen:
+                        # Si no se encuentra, buscar otra clase alternativa
+                        imagen = div_imagen.find('img', class_="image image_placeholder")
+
+                    if imagen:
+                        # Intentar obtener el src
+                        if 'src' in imagen.attrs:
+                            imagen_url = imagen['src']
+                        elif 'data-interchange' in imagen.attrs:
+                            data_interchange = imagen['data-interchange']
+                            try:
+                                # Extraer la URL del 'data-interchange'
+                                imagen_url = data_interchange.split(',')[0].strip().split('[')[1]
+                            except IndexError:
+                                imagen_url = None  # Por si el formato no es el esperado         
                 
             descripcion = parrafo_tag.text.strip() if parrafo_tag else ""
                 

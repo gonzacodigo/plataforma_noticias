@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %} Noticias {% endblock title %}
+
 {% block content %}
 {% include 'includes/header.html' %}
+
 <div class="div_foto_perfil" style="display: flex; justify-content: center">
   <img
     src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
@@ -10,96 +12,108 @@
     style="margin-top: 32px"
   />
 </div>
-<h1
-  style="
+
+<h1 style="
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     font-size: 2.5em;
     margin-top: 8px;
     color: white;
-    font-weight: bold;
-  "
->
+    font-weight: bold;">
   PLATAFORMA DE MEDIOS DIGITALES
 </h1>
-<section
-  style="
+
+<section style="
     max-width: 800px;
     margin: 30px auto;
     padding: 20px;
-    background-color:rgb(255, 0, 200);
-    border-radius: 12px;
-  "
->
-<h3
-  style="
-    background-color: rgba(0, 0, 0, 0.22);
-    padding: 16px;
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.5em;
-    margin-top: 8px;
-    color: white;
-    font-weight: bold;
-  "
->
-  BUSCAR NOTICIAS POR CATEGORIA
-</h3>
-  <form
-    method="get"
-    style="
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
-      background-color: 0px 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 32px;
-    "
-  >
-  <form
-    method="get"
-    style="
+    background-color: rgb(255, 0, 200);
+    border-radius: 12px;">
+  
+  <h3 style="
+      background-color: rgba(0, 0, 0, 0.22);
+      padding: 16px;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.5em;
+      margin-top: 8px;
+      color: white;
+      font-weight: bold;">
+    BUSCAR NOTICIAS POR CATEGORIA
+  </h3>
+
+  <form method="get" style="
       display: flex;
       flex-wrap: wrap;
       gap: 15px;
       justify-content: center;
       align-items: center;
-    "
-  >
-    {% for field in form %}
-    <div
-      style="
-        flex: 1 1 45%;
-        min-width: 200px;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      "
-    >
-      <label style="font-weight: bold; color: #333; font-size: 1em"
-        >{{ field.label }}</label
-      >
-      {{ field }}
-    </div>
+      padding: 32px;">
+    
+    {% for checkbox in form.categorias %}
+      <label class="categoria-checkbox">
+        {{ checkbox.tag }}
+        {{ checkbox.choice_label }}
+      </label>
     {% endfor %}
 
     <div style="width: 100%; text-align: center; margin-top: 20px">
-      <button
-        type="submit"
-        style="
+      <button type="submit" style="
           padding: 12px 25px;
-          background-color: #ce00a3;
+          background-color:rgba(0, 0, 0, 0.22);
           color: white;
           border: none;
           border-radius: 8px;
           font-size: 1em;
           cursor: pointer;
-          transition: background-color 0.3s;
-        "
-      >
+          transition: background-color 0.3s;">
         FILTRAR POR CATEGORIA
       </button>
     </div>
   </form>
-</section> {% endblock content %}
+</section>
+
+<style>
+  .categoria-checkbox {
+    background: white;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-weight: 600;
+    color: #333;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .categoria-checkbox:hover {
+    background: #f3f3f3;
+  }
+
+  .categoria-checkbox input[type="checkbox"] {
+    display: none;
+  }
+
+  .categoria-checkbox input[type="checkbox"]:checked + span,
+  .categoria-checkbox input[type="checkbox"]:checked ~ * {
+    font-weight: bold;
+    color: #ce00a3;
+  }
+
+  .categoria-checkbox input[type="checkbox"]:checked + span::before,
+  .categoria-checkbox input[type="checkbox"]:checked {
+    outline: 2px solid #ce00a3;
+    background-color: #ffe6f5;
+    border-radius: 8px;
+  }
+
+  .categoria-checkbox:has(input[type="checkbox"]:checked) {
+    border-color: #ce00a3;
+    background-color:rgb(250, 178, 221);
+  }
+</style>
+
+{% endblock content %}
