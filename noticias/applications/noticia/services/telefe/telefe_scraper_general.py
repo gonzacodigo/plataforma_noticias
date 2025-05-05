@@ -15,12 +15,12 @@ from applications.medio.models import Medio
 cache = {}
 CACHE_DURATION = 300 # 5 minutos en segundos
 
-def scrape_telefe():
+def scrape_telefe_general():
     # Verificar si existe información cacheada y si sigue vigente
     if 'telefe_data' in cache and (time.time() - cache['telefe_data']['timestamp'] < CACHE_DURATION):
         return cache['telefe_data']['data']
 
-    url = "https://noticias.mitelefe.com/espectaculos"
+    url = "https://noticias.mitelefe.com/"
     resultado = []
 
     with requests.Session() as session:
