@@ -13,7 +13,7 @@ from applications.medio.models import Medio
 
 # Definición de cache para evitar múltiples solicitudes a Infobae
 cache = {}
-CACHE_DURATION = 5 # 5 minutos en segundos
+CACHE_DURATION = 300 # 5 minutos en segundos
 
 def scrape_infobae_general():
     # Verificar si existe información cacheada y si sigue vigente
@@ -82,6 +82,7 @@ def scrape_infobae_general():
             if not article:
                 continue
 
+
             parrafo_tag = article_header.find('h2', class_='article-subheadline text_align_left') if article_header else None
             descripcion = parrafo_tag.text.strip() if parrafo_tag else ""
 
@@ -143,6 +144,10 @@ def scrape_infobae_general():
             # Extraer el contenido de la noticia
             parrafos = soup_article.find_all('p', class_="paragraph")
             contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
+
+            # Validar que haya contenido
+            if not contenido.strip():
+                continue
 
             # Crear el objeto Noticia en la base de datos
             noticia_obj = Noticia.objects.create(

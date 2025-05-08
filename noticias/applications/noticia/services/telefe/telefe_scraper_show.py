@@ -103,9 +103,13 @@ def scrape_telefe_show():
                 contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
                 # Extraer el párrafo (descripción)
                 parrafo_tag = article.find('div', class_='e-post-subtitle') if article else None
+                
+                # Validar que haya contenido
+                if not contenido.strip():
+                    continue
 
             descripcion = parrafo_tag.text.strip() if parrafo_tag else ""
-                
+
             # Extraer fecha de publicación
             date_tag = article.find('span', class_="e-post-time")
             date_text = date_tag.text.strip() if date_tag else None

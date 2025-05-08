@@ -168,12 +168,14 @@
           const resInfobae = await fetch('api/noticias/infobae/');
           const resTn = await fetch('/api/noticias/tn/');
           const resTelefe = await fetch('/api/noticias/telefe/');
-          const restnshow = await fetch('/api/noticias/tn/show');
+          const restnshow = await fetch('/api/noticias/tn/show/');
+          const resclarin = await fetch('/api/noticias/clarin/');
           await resInfobae.json();
           await resInfobaeShow.json();
           await resTn.json();
           await restnshow.json();
           await resTelefe.json();
+          await resclarin.json();
 
           // Guardar bandera y recargar
           localStorage.setItem('recargaHecha', 'true');

@@ -143,6 +143,10 @@ def scrape_infobae_show():
             parrafos = soup_article.find_all('p', class_="paragraph")
             contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
 
+            # Validar que haya contenido
+            if not contenido.strip():
+                continue
+
             # Crear el objeto Noticia en la base de datos
             noticia_obj = Noticia.objects.create(
                 titulo=title,

@@ -88,6 +88,10 @@ def scrape_tn_show():
                             # Extraer imagen
                 div_imagen = article.find('picture', class_="responsive-image")
                 imagen_url = None  # Valor por defecto
+                
+                # Validar que haya contenido
+                if not contenido.strip():
+                    continue
 
                 if div_imagen:
                     # Buscar la etiqueta img con la clase más específica
