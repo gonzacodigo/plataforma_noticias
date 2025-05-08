@@ -1,4 +1,5 @@
 from django.urls import reverse_lazy
+from django.db.models import Case, When, IntegerField
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -87,28 +88,36 @@ class NoticiasTelefeAPIView(APIView):
             return Response(data[0], status=data[1])
 
         return Response(data, status=status.HTTP_200_OK)
-    
-# Vista que lista todos los empleados con paginación de 5 noticias por página
+
+
 class List_all_noticiasListView(ListView):
-        model = Noticia
-        context_object_name = 'noticias'
-        template_name = 'noticia/noticia_list.html'
-        paginate_by = 30  # Se establece la paginación en 5 noticias por página
+    model = Noticia
+    context_object_name = 'noticias'
+    template_name = 'noticia/noticia_list.html'
+    paginate_by = 100
 
-        def get_queryset(self):
-            palabra_clave = self.request.GET.get('kword', '').strip()
-            f1 = self.request.GET.get('fecha1', '').strip()
-            f2 = self.request.GET.get('fecha2', '').strip()
+    def get_queryset(self):
+        palabra_clave = self.request.GET.get('kword', '').strip()
+        f1 = self.request.GET.get('fecha1', '').strip()
+        f2 = self.request.GET.get('fecha2', '').strip()
 
-            if f1 and f2:
-                # Buscar por rango de fechas, incluyendo opcionalmente la palabra clave
-                return Noticia.objects.buscar_noticia(f1, f2)
-            elif palabra_clave:
-                # Buscar por palabra clave
-                return Noticia.objects.buscar_noticia_titulo(palabra_clave)
-            else:
-                # Buscar todas las noticias hasta hoy (usando el método que programaste)
-                return Noticia.objects.buscar_noticia()
+        if f1 and f2:
+            queryset = Noticia.objects.buscar_noticia(f1, f2)
+        elif palabra_clave:
+            queryset = Noticia.objects.buscar_noticia_titulo(palabra_clave)
+        else:
+            queryset = Noticia.objects.buscar_noticia()
+
+        # Priorizar categorías SHOW, TELESHOW, ESPECTACULOS
+        return queryset.annotate(
+            prioridad=Case(
+                When(categoria__nombre__iexact='SHOW', then=0),
+                When(categoria__nombre__iexact='TELESHOW', then=1),
+                When(categoria__nombre__iexact='ESPECTACULOS', then=2),
+                default=3,
+                output_field=IntegerField()
+            )
+        ).order_by('prioridad', '-fecha')
             
                        
 
