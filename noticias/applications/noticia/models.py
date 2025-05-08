@@ -4,12 +4,16 @@ from .managers import NoticiaManager
 
 
 
-# Create your models here.
 class Categoria(models.Model):
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.nombre.upper()
+
+    def save(self, *args, **kwargs):
+        self.nombre = self.nombre.upper()  # o .lower(), como prefieras
+        super().save(*args, **kwargs)
+
 
 class Noticia(models.Model):
     titulo = models.CharField(max_length=500)

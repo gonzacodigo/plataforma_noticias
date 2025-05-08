@@ -62,9 +62,9 @@ def scrape_infobae_show():
             if not link_href.startswith('http'):
                 link_href = urljoin("https://www.infobae.com", link_href)
 
-            # Categoría dinámica basada en el URL
-            categoria_link = link_href.split("/")[3] if len(link_href.split("/")) > 3 else "General"
-            categoria_obj, _ = Categoria.objects.get_or_create(nombre=categoria_link)
+            # Categoría ESTATICA basada en el URL
+            categoria_obj, _ = Categoria.objects.get_or_create(nombre='SHOW'.upper())
+
 
             # Obtener el contenido de la noticia completa
             try:

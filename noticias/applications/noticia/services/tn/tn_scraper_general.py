@@ -63,7 +63,8 @@ def scrape_tn_general():
 
             # Categoría dinámica basada en el URL
             categoria_link = link_href.split("/")[3] if len(link_href.split("/")) > 3 else "General"
-            categoria_obj, _ = Categoria.objects.get_or_create(nombre=categoria_link)
+            categoria_nombre = categoria_link.upper()
+            categoria_obj, _ = Categoria.objects.get_or_create(nombre=categoria_nombre)
 
             # Obtener el contenido de la noticia completa
             try:
