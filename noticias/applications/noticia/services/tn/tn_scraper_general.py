@@ -59,7 +59,7 @@ def scrape_tn_general():
 
             # Asegurarse que el link sea completo
             if not link_href.startswith('http'):
-                link_href = urljoin("https://tn.com.ar/show/", link_href)
+                link_href = urljoin("https://tn.com.ar/", link_href)
 
             # Categoría dinámica basada en el URL
             categoria_link = link_href.split("/")[3] if len(link_href.split("/")) > 3 else "General"
@@ -88,6 +88,12 @@ def scrape_tn_general():
                             # Extraer imagen
                 div_imagen = article.find('picture', class_="responsive-image")
                 imagen_url = None  # Valor por defecto
+
+                # Validar que haya contenido
+                if not parrafos:
+                    parrafos = soup_article.find_all('div', class_="paragraph")
+                    contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
+
 
                 if div_imagen:
                     # Buscar la etiqueta img con la clase más específica

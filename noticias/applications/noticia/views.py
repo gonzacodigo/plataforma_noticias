@@ -9,6 +9,7 @@ from .services.tn.tn_scraper_general import scrape_tn_general
 from .services.tn.tn_scraper_show import scrape_tn_show
 from .services.telefe.telefe_scraper_show import scrape_telefe_show
 from .services.telefe.telefe_scraper_general import scrape_telefe_general
+from .services.clarin.clarin_scraper_general import scrape_clarin_general
 from .models import Noticia
 from .forms import CategoriaForm
 from applications.medio.forms import MedioForm
@@ -42,6 +43,15 @@ class NoticiasInfobaeAPIView(APIView):
 class NoticiasTnAPIView(APIView):
     def get(self, request):
         data = scrape_tn_general()
+            # Redirección tras la creación exitosa
+        if isinstance(data, tuple):  # Error handling (data, status_code)
+            return Response(data[0], status=data[1])
+
+        return Response(data, status=status.HTTP_200_OK)
+    
+class NoticiasclarinAPIView(APIView):
+    def get(self, request):
+        data = scrape_clarin_general()
             # Redirección tras la creación exitosa
         if isinstance(data, tuple):  # Error handling (data, status_code)
             return Response(data[0], status=data[1])

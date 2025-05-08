@@ -76,7 +76,7 @@ def scrape_telefe_general():
 
             # Asegurarse que el link sea completo
             if not link_href.startswith('http'):
-                link_href = urljoin("https://noticias.mitelefe.com/espectaculos", link_href)
+                link_href = urljoin("https://noticias.mitelefe.com/", link_href)
 
             # Categoría dinámica basada en el URL
             categoria_link = link_href.split("/")[3] if len(link_href.split("/")) > 3 else "General"
@@ -104,7 +104,12 @@ def scrape_telefe_general():
                 # Extraer el párrafo (descripción)
                 parrafo_tag = article.find('div', class_='e-post-subtitle') if article else None
 
+                # Validar que haya contenido
+                if not contenido.strip():
+                    continue
+
             descripcion = parrafo_tag.text.strip() if parrafo_tag else ""
+
                 
             # Extraer fecha de publicación
             date_tag = article.find('span', class_="e-post-time")
