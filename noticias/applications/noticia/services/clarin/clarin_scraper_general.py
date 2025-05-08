@@ -61,7 +61,8 @@ def scrape_clarin_general():
                 link_href = urljoin("https://www.clarin.com/", link_href)
 
             categoria_link = link_href.split("/")[3] if len(link_href.split("/")) > 3 else "General"
-            categoria_obj, _ = Categoria.objects.get_or_create(nombre=categoria_link)
+            categoria_nombre = categoria_link.upper()
+            categoria_obj, _ = Categoria.objects.get_or_create(nombre=categoria_nombre)
 
             try:
                 article_response = session.get(link_href)
