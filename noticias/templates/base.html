@@ -86,7 +86,6 @@
           "
         >
           <p><strong>Descripción:</strong> {{ p.descripcion }}</p>
-          <p><strong>Visitas:</strong> {{ p.visitas }}</p>
           <p><strong>Contenido:</strong> {{ p.contenido }}</p>
           <p style="margin-top: 10px">
             <a
@@ -103,6 +102,8 @@
               Leer más
             </a>
           </p>
+        <p><strong>Visitas:</strong> {{ p.visitas }}</p>
+
         </div>
       </div>
       {% endfor %}
@@ -147,20 +148,25 @@
         const mensaje = document.getElementById('mensaje');
         const spinner = document.getElementById('spinner');
 
-        // Si ya se hizo la recarga
-        if (localStorage.getItem('recargaHecha')) {
-          // Mostrar el mensaje fijo y ocultar el spinner
-          mensaje.innerHTML = '🚀 A TRABAJAR 👍';
-          mensaje.style.color = 'white';
-          mensaje.style.fontFamily = 'Montserrat, sans-serif';
-          spinner.style.display = 'none';
+        const urlParams = new URLSearchParams(window.location.search);
+        const tieneFiltros = urlParams.has('kword') || urlParams.has('fecha1') || urlParams.has('fecha2');
 
-          // Limpiar bandera para futuras cargas
+        // Si hay filtros, no recargar automáticamente
+        if (tieneFiltros) {
+          spinner.style.display = 'none';
+          mensaje.innerText = 'Resultados filtrados 📝';
+          mensaje.style.color = 'white';
+          return;
+        }
+
+        if (localStorage.getItem('recargaHecha')) {
+          mensaje.innerText = '🚀 A TRABAJAR 👍';
+          mensaje.style.color = 'white';
+          spinner.style.display = 'none';
           localStorage.removeItem('recargaHecha');
           return;
         }
 
-        // Mostrar spinner mientras se cargan los datos
         spinner.style.display = 'flex';
 
         try {
@@ -168,19 +174,22 @@
           const resInfobae = await fetch('api/noticias/infobae/');
           const resTn = await fetch('/api/noticias/tn/');
           const resTelefe = await fetch('/api/noticias/telefe/');
-          const restnshow = await fetch('/api/noticias/tn/show/');
-          const resclarin = await fetch('/api/noticias/clarin/');
-          await resInfobae.json();
-          await resInfobaeShow.json();
-          await resTn.json();
-          await restnshow.json();
-          await resTelefe.json();
-          await resclarin.json();
+          const resTelefeshow = await fetch('api/noticias/telefe/show/');
+          const resTnshow = await fetch('/api/noticias/tn/show/');
+          const resClarin = await fetch('/api/noticias/clarin/');
 
-          // Guardar bandera y recargar
+          await Promise.all([
+            resInfobae.json(),
+            resInfobaeShow.json(),
+            resTn.json(),
+            resTnshow.json(),
+            resTelefe.json(),
+            resTelefeshow.json(),
+            resClarin.json()
+          ]);
+
           localStorage.setItem('recargaHecha', 'true');
           location.reload();
-
         } catch (error) {
           console.error(error);
           mensaje.innerText = 'Error al actualizar noticias automáticamente';
