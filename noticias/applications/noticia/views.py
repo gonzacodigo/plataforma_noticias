@@ -94,13 +94,14 @@ class List_all_noticiasListView(ListView):
     model = Noticia
     context_object_name = 'noticias'
     template_name = 'noticia/noticia_list.html'
-    paginate_by = 100
+    paginate_by = 300
 
     def get_queryset(self):
         palabra_clave = self.request.GET.get('kword', '').strip()
         f1 = self.request.GET.get('fecha1', '').strip()
         f2 = self.request.GET.get('fecha2', '').strip()
 
+        # Usamos el manager según los filtros
         if f1 and f2:
             queryset = Noticia.objects.buscar_noticia(f1, f2)
         elif palabra_clave:
@@ -108,16 +109,20 @@ class List_all_noticiasListView(ListView):
         else:
             queryset = Noticia.objects.buscar_noticia()
 
-        # Priorizar categorías SHOW, TELESHOW, ESPECTACULOS
-        return queryset.annotate(
+        # Anotamos la prioridad
+        queryset = queryset.annotate(
             prioridad=Case(
-                When(categoria__nombre__iexact='SHOW', then=0),
-                When(categoria__nombre__iexact='TELESHOW', then=1),
-                When(categoria__nombre__iexact='ESPECTACULOS', then=2),
+                When(categoria__nombre__iexact='ESPECTACULOS', then=0),
+                When(categoria__nombre__iexact='DEPORTES', then=1),
+                When(categoria__nombre__iexact='POLITICA', then=2),
                 default=3,
-                output_field=IntegerField()
+                output_field=IntegerField(),
             )
-        ).order_by('prioridad', '-fecha')
+        )
+
+        # Ordenar por prioridad y fecha (ya ordenado por fecha ascendente/descendente según el manager)
+        return queryset.order_by('prioridad', 'fecha' if f1 and f2 else '-fecha')
+
             
                        
 

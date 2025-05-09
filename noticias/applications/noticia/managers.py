@@ -13,7 +13,7 @@ class NoticiaManager(models.Manager):
         date1 = datetime.strptime(fecha1, "%Y-%m-%d")
         date2 = datetime.strptime(fecha2, "%Y-%m-%d") + timedelta(days=1)
 
-        return self.filter(fecha__gte=date1, fecha__lt=date2).order_by('-fecha')
+        return self.filter(fecha__gte=date1, fecha__lt=date2).order_by('fecha')
     
     def listar_noticia_categoria(self, categoria_id):
         return self.filter(categoria__id=categoria_id).order_by('-fecha')

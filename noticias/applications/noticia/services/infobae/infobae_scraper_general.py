@@ -63,12 +63,30 @@ def scrape_infobae_general():
             if not link_href.startswith('http'):
                 link_href = urljoin("https://www.infobae.com", link_href)
 
-            # Categoría dinámica basada en el URL
+            # Extraer categoría desde el link
             categoria_link = link_href.split("/")[3] if len(link_href.split("/")) > 3 else "General"
+
+            # Ignorar si la categoría es tipo "watch"
+            if categoria_link.lower().startswith('watch'):
+                print('ENLACE IGNORADO PORQUE LA CATEGORIA ES WATCH')
+                continue
+
+            # Normalizar categoría
             categoria_nombre = categoria_link.upper()
+
+            # Categorías permitidas explícitamente
+            CATEGORIAS_VALIDAS = ['DEPORTES', 'INTERNACIONAL','POLICIALES', 'POLITICA', 'ECONOMIA', 'TECNO','MODA','CULTURA','AUTOS']
+
+            # Si no está en la lista permitida, asignar "GENERAL"
+            if categoria_nombre not in CATEGORIAS_VALIDAS:
+                categoria_nombre = 'GENERAL'
+
+            # Crear o obtener la categoría
             categoria_obj, _ = Categoria.objects.get_or_create(nombre=categoria_nombre)
 
 
+                
+            
             # Obtener el contenido de la noticia completa
             try:
                 article_response = session.get(link_href)
