@@ -1,24 +1,23 @@
+import os
 from django.core.exceptions import ImproperlyConfigured
 import json
-
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from unipath import Path
 BASE_DIR = Path(__file__).ancestor(3)
 
+# Ruta absoluta al archivo secret.json
+secret_file = os.path.join(BASE_DIR, 'plataforma_noticias', 'noticias', 'secret.json')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-with open("secret.json") as f:
+# Lee el archivo secreto
+with open(secret_file) as f:
     secret = json.loads(f.read())
 
 def get_secret(secret_name, secrets=secret):
     try:
         return secrets[secret_name]
-    except:
-        msg = "la variable %s no existe" % secret_name
+    except KeyError:
+        msg = f"La variable {secret_name} no existe"
         raise ImproperlyConfigured(msg)
 
 
