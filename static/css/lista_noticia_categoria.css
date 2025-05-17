@@ -1,0 +1,70 @@
+.div_foto_perfil {
+  display: flex;
+  justify-content: center;
+}
+
+.div_foto_perfil img {
+  margin-top: 32px;
+}
+.div_checkbox{
+      display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+h1.titulo-principal {
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5em;
+  margin-top: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+section.contenedor-filtro {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: rgb(255, 0, 200);
+  border-radius: 12px;
+}
+
+h3.subtitulo-filtro {
+  background-color: rgba(0, 0, 0, 0.22);
+  padding: 16px;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5em;
+  margin-top: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+form.filtro-form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+div.boton-filtrar {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+div.boton-filtrar button {
+  padding: 12px 25px;
+  background-color: rgba(0, 0, 0, 0.22);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}

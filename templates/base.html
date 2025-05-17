@@ -1,135 +1,77 @@
 {% load static %}
-<!-- Corregido -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <title>{% block title %} {% endblock title %}</title>
+    <link rel="stylesheet" href="{% static 'css/noticia_list.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/lista_noticia_categoria.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/lista_noticia_medio.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>{% block title %}{% endblock title %}</title>
   </head>
-  <body style="background: linear-gradient(180deg, #38042F 0%, #8E0576 50%, #D201A5 100%);">
-    {% block content %} {% endblock content %}
-    <div
-      style="
-        display: flex;
-        flex-wrap: wrap;
-        gap: 30px;
-        justify-content: center;
-        margin-top: 40px;
-      "
-    >
+  <body class="body_class">
+    {% block content %}{% endblock content %}
+
+    <div class="noticias-container">
       {% for p in noticias %}
-      <div
-        style="
-          border: 1px solid #e0e0e0;
-          border-radius: 16px;
-          padding: 20px;
-          width: 320px;
-          background: white;
-          box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        "
-      >
-        <p style="font-size: 0.9em; color: #666; margin-bottom: 10px">
+      <div class="noticia-card">
+        <p class="noticia-fecha">
           <strong>Fecha de publicación:</strong> {{ p.fecha }}:00 hs
         </p>
         <p><strong>Medio:</strong> {{ p.medio }}</p>
         <p><strong>Categoría:</strong> {{ p.categoria }}</p>
 
-        <h4 style="
-        font-size: 1.2em;
-        color: #222;
-        margin-bottom: 10px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        min-height: 6em;
-      ">
-        {{ p.titulo }}
-      </h4>      
-        <img
-          src="{{ p.portada }}"
-          alt="Portada"
-          style="width: 100%; height: auto; border-radius: 8px; margin: 10px 0"
-        />
+        <h4 class="noticia-titulo">{{ p.titulo }}</h4>
 
-        <button
-          class="accordion-button"
-          style="
-            margin-top: 10px;
-            width: 100%;
-            background-color: #ce00a3;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background-color 0.3s;
-          "
-        >
+        <img src="{{ p.portada }}" alt="Portada" class="noticia-portada" />
+
+        <button class="accordion-button">
           Mostrar / Ocultar Detalles
         </button>
 
-        <div
-          class="accordion-content"
-          style="
-            display: none;
-            margin-top: 15px;
-            font-size: 0.95em;
-            color: #555;
-          "
-        >
+        <div class="accordion-content">
           <p><strong>Descripción:</strong> {{ p.descripcion }}</p>
           <p><strong>Contenido:</strong> {{ p.contenido }}</p>
           <p style="margin-top: 10px">
-            <a
-              href="{{ p.url }}"
-              target="_blank"
-              style="
-                padding: 8px 12px;
-                background-color: #ce00a3;
-                color: white;
-                text-decoration: none;
-                border-radius: 6px;
-              "
-            >
-              Leer más
-            </a>
+            <a href="{{ p.url }}" target="_blank">Leer más</a>
           </p>
-        <p><strong>Visitas:</strong> {{ p.visitas }}</p>
-
+          <p><strong>Visitas:</strong> {{ p.visitas }}</p>
         </div>
       </div>
       {% endfor %}
     </div>
-    {% if is_paginated %}
-      <nav aria-label="Pagination" style="margin:26px;">
-        <ul class="pagination text-center">
-          {% if page_obj.has_previous %}
-          <li class="pagination-previous"><a href="?page={{ page_obj.previous_page_number }}" style="color:white" >ATRÁS</a></li>
-          {% endif %}
-          
-          {% for pagina in paginator.page_range %}
-          {% if pagina == page_obj.number %}
-          <li class="current" style="background-color: #78005e;"><span> {{ pagina }} </span></li>
-          {% else %}
-          <li style="background-color: #78005e;"><a href="?page={{ pagina }}" style="color: rgba(255, 255, 255, 0.616);">{{ pagina }}</a></li>
-          {% endif %}
-          {% endfor %}
 
-          {% if page_obj.has_next %}
-          <li class="pagination-next"><a href="?page={{ page_obj.next_page_number }}" style="color:white" >SIGUIENTE</a></li>
-          {% endif %}
-        </ul>
-      </nav>
-      {% endif %}
-    <!-- JavaScript para Acordeones -->
+    {% if is_paginated %}
+    <nav aria-label="Pagination">
+      <ul class="pagination text-center">
+        {% if page_obj.has_previous %}
+        <li class="pagination-previous">
+          <a href="?page={{ page_obj.previous_page_number }}">ATRÁS</a>
+        </li>
+        {% endif %}
+
+        {% for pagina in paginator.page_range %}
+        {% if pagina == page_obj.number %}
+        <li class="current"><span>{{ pagina }}</span></li>
+        {% else %}
+        <li><a href="?page={{ pagina }}">{{ pagina }}</a></li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="pagination-next">
+          <a href="?page={{ page_obj.next_page_number }}">SIGUIENTE</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+
+    <!-- JavaScript para acordeones -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const buttons = document.querySelectorAll(".accordion-button");
@@ -144,6 +86,7 @@
           });
         });
       });
+
       window.addEventListener('DOMContentLoaded', async () => {
         const mensaje = document.getElementById('mensaje');
         const spinner = document.getElementById('spinner');
@@ -151,31 +94,34 @@
         const urlParams = new URLSearchParams(window.location.search);
         const tieneFiltros = urlParams.has('kword') || urlParams.has('fecha1') || urlParams.has('fecha2');
 
-        // Si hay filtros, no recargar automáticamente
         if (tieneFiltros) {
           spinner.style.display = 'none';
-          mensaje.innerText = 'Resultados filtrados 📝';
-          mensaje.style.color = 'white';
+          if (mensaje) {
+            mensaje.innerText = 'Resultados filtrados 📝';
+            mensaje.style.color = 'white';
+          }
           return;
         }
 
         if (localStorage.getItem('recargaHecha')) {
-          mensaje.innerText = '🚀 A TRABAJAR 👍';
-          mensaje.style.color = 'white';
+          if (mensaje) {
+            mensaje.innerText = '🚀 A TRABAJAR 👍';
+            mensaje.style.color = 'white';
+          }
           spinner.style.display = 'none';
           localStorage.removeItem('recargaHecha');
           return;
         }
 
-        spinner.style.display = 'flex';
+        if (spinner) spinner.style.display = 'flex';
 
         try {
           const resInfobaeShow = await fetch('api/noticias/infobae/show/');
           const resInfobae = await fetch('api/noticias/infobae/');
           const resTn = await fetch('/api/noticias/tn/');
-          const resTelefe = await fetch('/api/noticias/telefe/');
+          const resTelefe = await fetch('api/noticias/telefe/');
           const resTelefeshow = await fetch('api/noticias/telefe/show/');
-          const resTnshow = await fetch('/api/noticias/tn/show/');
+          const resTnshow = await fetch('api/noticias/tn/show/');
           const resClarin = await fetch('/api/noticias/clarin/');
 
           await Promise.all([
@@ -192,10 +138,21 @@
           location.reload();
         } catch (error) {
           console.error(error);
-          mensaje.innerText = 'Error al actualizar noticias automáticamente';
-          spinner.style.display = 'none';
+          if (mensaje) {
+            mensaje.innerText = 'Error al actualizar noticias automáticamente';
+            spinner.style.display = 'none';
+          }
         }
       });
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.js' %}"></script>
+    <script src="{% static 'js/vendor/what-input.js' %}"></script>
+    <script src="{% static 'js/vendor/foundation.min.js' %}"></script>
+    <script>
+      $(document).foundation();
+    </script>
   </body>
 </html>
+

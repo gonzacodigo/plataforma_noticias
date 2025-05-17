@@ -1,20 +1,31 @@
-{% load static %}  <!-- Corregido -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú Responsive Foundation</title>
+  <link rel="stylesheet" href="{% static 'css/foundation.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}">
+</head>
+<body>
 
-<div class="top-bar" style="background-color: black;">
-  <div class="top-bar-left" style="background-color: black;">
-    <ul class="dropdown menu" data-dropdown-menu style="background-color: black; display: flex; align-items: center; justify-content: center;">
-    <li class="menu-text" style="font-family: 'Montserrat', sans-serif; color: white; font-size: 2em;">Utilidades:</li>
-      <li><a href="{% url 'noticia_app:inicio' %}" style="font-family: 'Montserrat', sans-serif;color: white;font-weight: bold;  background-color: #ce00a3; border-radius: 8px; margin: 8px; padding: 12px; cursor:pointer">INICIO</a></li>
-      <li><a href="{% url 'noticia_app:noticia_categoria' %}" style="font-family: 'Montserrat', sans-serif;color: white;font-weight: bold;  background-color: #ce00a3; border-radius: 8px; margin: 8px; padding: 12px; cursor: pointer">CATEGORIA</a></li>
-      <li><a href="{% url 'noticia_app:noticia_medio' %}" style="font-family: 'Montserrat', sans-serif; color: white; font-weight: bold; background-color: #ce00a3; border-radius: 8px; margin: 8px; padding: 12px; cursor: pointer">MEDIOS</a></li>
-      <li><a href="{% url 'noticia_app:instagram' %}" style="font-family: 'Montserrat', sans-serif; color: white; font-weight: bold; background-color: #ce00a3; border-radius: 8px; margin: 8px; padding: 12px; cursor: pointer">INSTAGRAM</a></li>
-      <li><a href="{% url 'noticia_app:buscador_imagenes' %}" style="font-family: 'Montserrat', sans-serif; color: white; font-weight: bold; background-color: #ce00a3; border-radius: 8px; margin: 8px; padding: 12px; cursor: pointer">BUSCADOR DE IMAGENES</a></li>
+  <!-- Menú responsive: hamburguesa en móvil, horizontal en desktop -->
+  <div class="title-bar" data-responsive-toggle="main-menu" data-hide-for="medium">
+    <button class="menu-icon" type="button" data-toggle></button>
+    <div class="title-bar-title">Utilidades</div>
   </div>
-</div>
 
-<script src="{% static 'js/vendor/jquery.js' %}"></script>
-<script src="{% static 'js/vendor/what-input.js' %}"></script>
-<script src="{% static 'js/vendor/foundation.min.js' %}"></script>
-<script>
-  $(document).foundation();
-</script>
+  <div class="top-bar" id="main-menu">
+    <div class="top-bar-left">
+      <ul class="dropdown menu" data-dropdown-menu>
+        <li><a href="{% url 'noticia_app:inicio' %}" class="menu-link">INICIO</a></li>
+        <li><a href="{% url 'noticia_app:noticia_categoria' %}" class="menu-link">CATEGORIA</a></li>
+        <li><a href="{% url 'noticia_app:noticia_medio' %}" class="menu-link">MEDIOS</a></li>
+        <li><a href="{% url 'noticia_app:instagram' %}" class="menu-link">INSTAGRAM</a></li>
+        <li><a href="{% url 'noticia_app:buscador_imagenes' %}" class="menu-link">BUSCADOR DE IMÁGENES</a></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
