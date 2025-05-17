@@ -1,0 +1,120 @@
+.body_class{
+    background:linear-gradient(180deg, #38042F 0%, #8E0576 50%, #D201A5 100%);
+}
+
+/* Contenedor principal con flex para las tarjetas */
+.noticias-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+/* Cada tarjeta */
+.noticia-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 20px;
+  background: white;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Fecha publicación */
+.noticia-fecha {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* Título de la noticia */
+.noticia-titulo {
+  font-size: 1.2em;
+  color: #222;
+  margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  min-height: 6em;
+}
+
+/* Imagen portada */
+.noticia-portada {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+/* Botón acordeón */
+.accordion-button {
+  margin-top: 10px;
+  width: 100%;
+  background-color: #ce00a3;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Contenido oculto acordeón */
+.accordion-content {
+  display: none;
+  margin-top: 15px;
+  font-size: 0.95em;
+  color: #555;
+}
+
+/* Enlace 'Leer más' dentro del acordeón */
+.accordion-content a {
+  padding: 8px 12px;
+  background-color: #ce00a3;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+/* Paginación */
+.pagination {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  padding-left: 0;
+  margin: 26px 0;
+  gap: 8px;
+}
+
+.pagination li {
+  background-color: #78005e;
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+
+.pagination li a,
+.pagination li span {
+  color: rgba(255, 255, 255, 0.616);
+  text-decoration: none;
+}
+
+.pagination li.current span {
+  color: white;
+  font-weight: 600;
+}
+
+.pagination li.pagination-previous a,
+.pagination li.pagination-next a {
+  color: white;
+}
+
+/* Fondo body */
+body {
+  background: linear-gradient(180deg, #38042F 0%, #8E0576 50%, #D201A5 100%);
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+}

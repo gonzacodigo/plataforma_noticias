@@ -1,0 +1,111 @@
+/* Estilos generales para el div_foto_perfil */
+.div_foto_perfil {
+  display: flex;
+  justify-content: center;
+}
+
+.div_foto_perfil img {
+  margin-top: 32px;
+}
+
+/* Título principal */
+h1 {
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.5em;
+  margin-top: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+/* Sección principal */
+section {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.116);
+  border-radius: 12px;
+}
+
+/* Título h3 dentro de section */
+section h3 {
+  background-color: rgba(0, 0, 0, 0.116);
+  padding: 16px;
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5em;
+  margin-top: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+/* Formulario */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 32px;
+}
+
+/* Select */
+select {
+  padding: 10px 15px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+  color: #333;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-family: "Montserrat", sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+select:focus {
+  border-color: #ce00a3;
+  box-shadow: 0 0 0 3px rgba(206, 0, 163, 0.2);
+  outline: none;
+}
+
+/* Options dentro del select */
+option {
+  padding: 8px;
+}
+
+/* Contenedor para cada campo del formulario */
+form > div {
+  flex: 1 1 45%;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Labels de los campos */
+form > div > label {
+  font-weight: bold;
+  color: #333;
+  font-size: 1em;
+}
+
+/* Botón de enviar */
+form > div:last-child, /* El div contenedor del botón */
+button[type="submit"] {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+button[type="submit"] {
+  padding: 12px 25px;
+  background-color: #ce00a3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}

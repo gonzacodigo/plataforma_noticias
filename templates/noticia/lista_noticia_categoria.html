@@ -5,68 +5,30 @@
 {% block content %}
 {% include 'includes/header.html' %}
 
-<div class="div_foto_perfil" style="display: flex; justify-content: center">
-  <img
-    src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
-    alt="Logo de Desenchufadas"
-    style="margin-top: 32px"
-  />
+<div class="div_foto_perfil">
+  <img src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}" alt="Logo de Desenchufadas" />
 </div>
 
-<h1 style="
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.5em;
-    margin-top: 8px;
-    color: white;
-    font-weight: bold;">
+<h1 class="titulo-principal">
   PLATAFORMA DE MEDIOS DIGITALES
 </h1>
 
-<section style="
-    max-width: 800px;
-    margin: 30px auto;
-    padding: 20px;
-    background-color: rgb(255, 0, 200);
-    border-radius: 12px;">
-  
-  <h3 style="
-      background-color: rgba(0, 0, 0, 0.22);
-      padding: 16px;
-      text-align: center;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1.5em;
-      margin-top: 8px;
-      color: white;
-      font-weight: bold;">
+<section class="contenedor-filtro">
+  <h3 class="subtitulo-filtro">
     BUSCAR NOTICIAS POR CATEGORIA
   </h3>
 
-  <form method="get" style="
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      align-items: center;
-      padding: 32px;">
-    
+  <form method="get" class="filtro-form">
+    <div class="div_checkbox">
     {% for checkbox in form.categorias %}
       <label class="categoria-checkbox">
         {{ checkbox.tag }}
         {{ checkbox.choice_label }}
       </label>
     {% endfor %}
-
-    <div style="width: 100%; text-align: center; margin-top: 20px">
-      <button type="submit" style="
-          padding: 12px 25px;
-          background-color:rgba(0, 0, 0, 0.22);
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-size: 1em;
-          cursor: pointer;
-          transition: background-color 0.3s;">
+</div>
+    <div class="boton-filtrar">
+      <button type="submit">
         FILTRAR POR CATEGORIA
       </button>
     </div>

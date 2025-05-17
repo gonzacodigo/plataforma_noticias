@@ -3,132 +3,36 @@
 {% block title %} Noticias {% endblock title %}
 {% block content %}
 {% include 'includes/header.html' %}
-<div class="div_foto_perfil" style="display: flex; justify-content: center">
+
+<div class="div-foto-perfil">
   <img
     src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
     alt="Logo de Desenchufadas"
-    style="margin-top: 32px"
+    class="logo"
   />
 </div>
-<h1
-  style="
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.5em;
-    margin-top: 8px;
-    color: white;
-    font-weight: bold;
-  "
->
+
+<h1 class="titulo-principal">
   PLATAFORMA DE MEDIOS DIGITALES
 </h1>
-<section
-  style="
-    max-width: 800px;
-    margin: 30px auto;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.116);
-    border-radius: 12px;
-  "
->
-  <h3
-    style="
-      background-color: rgba(0, 0, 0, 0.116);
-      padding: 16px;
-      text-align: center;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1.5em;
-      margin-top: 8px;
-      color: white;
-      font-weight: bold;
-    "
-  >
-    BUSCAR NOTICIAS
-  </h3>
-  <form
-    method="get"
-    style="
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 32px;
-    "
-  >
-    <input
-      type="text"
-      id="kword"
-      name="kword"
-      placeholder="Ingrese título..."
-      value="{{ request.GET.kword }}"
-      style="
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 1em;
-      "
-    />
-    <input
-      type="date"
-      name="fecha1"
-      id="fecha1"
-      value="{{ request.GET.fecha1 }}"
-      style="
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 1em;
-      "
-    />
-    <input
-      type="date"
-      name="fecha2"
-      id="fecha2"
-      value="{{ request.GET.fecha2 }}"
-      style="
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 1em;
-      "
-    />
-    <button
-      type="submit"
-      style="
-        padding: 10px 20px;
-        background-color: #ce00a3;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1em;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      "
-    >
-      CONSULTAR
-    </button>
+
+<section class="busqueda-noticias">
+  <h3 class="titulo-buscar">BUSCAR NOTICIAS</h3>
+  <form method="get" class="form-busqueda">
+    <input type="text" id="kword" name="kword" placeholder="Ingrese título..." value="{{ request.GET.kword }}" class="input-busqueda" />
+    <input type="date" name="fecha1" id="fecha1" value="{{ request.GET.fecha1 }}" class="input-busqueda" />
+    <input type="date" name="fecha2" id="fecha2" value="{{ request.GET.fecha2 }}" class="input-busqueda" />
+    <button type="submit" class="btn-consultar">CONSULTAR</button>
   </form>
 </section>
 
-<div
-  style="
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    justify-content: center;
-    margin-top: 40px;
-  "
->
-<div id="mensaje">
-  <div id="spinner" class="div_cargando" style="display:flex; justify-content: center; align-items: center;">
-  <i class="fas fa-spinner fa-spin" style="margin-right: 8px; color: white;">
-  </i>
-  <h5 style="font-family: 'Montserrat, sans-serif'; color: white">
-    Cargando noticias...
-  </h5>
+<div class="contenedor-noticias">
+  <div id="mensaje">
+    <div id="spinner" class="div-cargando">
+      <i class="fas fa-spinner fa-spin icon-spinner"></i>
+      <h5 class="texto-cargando">Cargando noticias...</h5>
+    </div>
   </div>
 </div>
-</div>
+
 {% endblock content %}
