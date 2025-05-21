@@ -118,7 +118,7 @@ def scrape_telefe_general():
             for article in article:
                 # Extraer el contenido de la noticia
                 parrafos = soup_article.find_all('div', class_="e-post-text")
-                contenido = "<br>".join([p.get_text().strip() for p in parrafos])
+                contenido = "<br><br>".join([p.get_text().strip() for p in parrafos])
                 # Extraer el párrafo (descripción)
                 parrafo_tag = article.find('div', class_='e-post-subtitle') if article else None
 
