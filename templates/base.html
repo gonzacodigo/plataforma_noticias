@@ -22,6 +22,36 @@
         <p class="noticia-fecha">
           <strong>Fecha de publicación:</strong> {{ p.fecha }}:00 hs
         </p>
+      <div class="compartir-redes" style="margin:32px 0px">
+        <p><strong>COMPARTIR NOTICIA</strong></p>
+
+        <!-- WhatsApp -->
+        <a href="https://wa.me/?text={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}" 
+          target="_blank" title="Compartir por WhatsApp">
+          <img src="{% static 'img/icons/whatsapp.png' %}" alt="WhatsApp" width="50">
+        </a>
+
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}" 
+          target="_blank" title="Compartir en Facebook">
+          <img src="{% static 'img/icons/facebook.png' %}" alt="Facebook" width="50">
+        </a>
+
+        <!-- X (Twitter) -->
+        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}" 
+          target="_blank" title="Compartir en X">
+          <img src="{% static 'img/icons/x.png' %}" alt="X" width="50px">
+        </a>
+
+        <!-- Copiar enlace -->
+        <button onclick="copiarTexto('{{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}')" 
+          title="Copiar enlace" style="background: none; border: none; cursor: pointer;">
+          <img src="{% static 'img/icons/participacion.png' %}" alt="Copiar enlace" width="50">
+        </button>
+      </div>
+
+
+
         <p><strong>Medio:</strong> {{ p.medio }}</p>
         <p><strong>Categoría:</strong> {{ p.categoria }}</p>
 
@@ -146,6 +176,17 @@
         }
       });
     </script>
+    <script>
+  function copiarTexto(texto) {
+    navigator.clipboard.writeText(texto).then(() => {
+      alert("¡Enlace copiado al portapapeles!");
+    }).catch(err => {
+      alert("Error al copiar");
+      console.error(err);
+    });
+  }
+</script>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/app.js' %}"></script>
     <script src="{% static 'js/vendor/jquery.js' %}"></script>
