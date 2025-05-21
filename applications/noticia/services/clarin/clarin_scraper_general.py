@@ -95,7 +95,7 @@ def scrape_clarin_general():
 
             for article in article:
                 parrafos = soup_article.find_all('div', class_="sc-80531b6b-0 chRIGJ container-text text-embed")
-                contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
+                contenido = "<br>".join([p.get_text().strip() for p in parrafos])
 
                 parrafo_tag = article.find('h2', class_='storySummary') if article else None
 
