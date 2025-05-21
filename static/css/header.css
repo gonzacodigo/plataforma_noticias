@@ -2,7 +2,8 @@
     background-color: #0a0a0a;
 }
 .menu-link{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
     color: white;
 }
 .menu-link:hover{

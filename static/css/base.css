@@ -1,7 +1,12 @@
+.p_content_acordeon{
+  font-family: 'Montserrat', sans-serif;
+}
+.p_content_acordeon strong{
+  font-family: 'Montserrat', sans-serif;
+}
 .body_class{
     background:linear-gradient(180deg, #38042F 0%, #8E0576 50%, #D201A5 100%);
 }
-
 /* Contenedor principal con flex para las tarjetas */
 .noticias-container {
   display: flex;
@@ -19,7 +24,6 @@
   background: white;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Fecha publicación */
@@ -31,7 +35,9 @@
 
 /* Título de la noticia */
 .noticia-titulo {
-  font-size: 1.2em;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2em;
+  font-weight: bold;
   color: #222;
   margin-bottom: 10px;
   overflow: hidden;
@@ -51,6 +57,7 @@
 
 /* Botón acordeón */
 .accordion-button {
+  font-family: 'Montserrat', sans-serif;
   margin-top: 10px;
   width: 100%;
   background-color: #ce00a3;
@@ -58,7 +65,7 @@
   border: none;
   padding: 10px;
   border-radius: 8px;
-  font-size: 1em;
+  font-size: 1.5em;
   cursor: pointer;
   transition: background-color 0.3s;
 }
@@ -67,7 +74,7 @@
 .accordion-content {
   display: none;
   margin-top: 15px;
-  font-size: 0.95em;
+  font-size: 1em;
   color: #555;
 }
 
