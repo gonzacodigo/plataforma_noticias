@@ -3,7 +3,7 @@ from django.db.models import Case, When, IntegerField
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView
 from .services.infobae.infobae_scraper_show import scrape_infobae_show
 from .services.infobae.infobae_scraper_general import scrape_infobae_general
 from .services.tn.tn_scraper_general import scrape_tn_general
@@ -14,6 +14,13 @@ from .services.clarin.clarin_scraper_general import scrape_clarin_general
 from .models import Noticia
 from .forms import CategoriaForm
 from applications.medio.forms import MedioForm
+
+
+# Vista que muestra los detalles de un empleado específico
+class NoticiasDetailView(DetailView):
+    model = Noticia  # Se usa el modelo Empleado
+    template_name = 'noticia/noticia_detail.html'  # Plantilla a renderizar
+    # No devuelve una lista, sino un objeto individual, no se necesita un bucle en el template
 
 # Vista que muestra una plantilla estática de presentación
 class InstagramViews(TemplateView):
