@@ -99,7 +99,8 @@ def scrape_tn_general():
             for article in article:
                 # Extraer el contenido de la noticia
                 parrafos = soup_article.find_all('p', class_="paragraph")
-                contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
+                contenido = "<br>".join([p.get_text().strip() for p in parrafos])
+
                 # Extraer el párrafo (descripción)
                 parrafo_tag = article.find('h2', class_='article__dropline font__body') if article else None
                             # Extraer imagen

@@ -156,7 +156,7 @@ def scrape_infobae_show():
 
             # Extraer el contenido de la noticia
             parrafos = soup_article.find_all('p', class_="paragraph")
-            contenido = " ".join([p.get_text().strip() for p in parrafos]) if parrafos else ""
+            contenido = "<br>".join([p.get_text().strip() for p in parrafos])
 
             # Validar que haya contenido
             if not contenido.strip():
