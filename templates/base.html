@@ -6,11 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
     <link rel="stylesheet" href="{% static 'css/noticia_list.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/lista_noticia_categoria.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/lista_noticia_categoria.css' %}"
+    />
     <link rel="stylesheet" href="{% static 'css/lista_noticia_medio.css' %}" />
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
     <title>{% block title %}{% endblock title %}</title>
   </head>
   <body class="body_class">
@@ -22,35 +31,57 @@
         <p class="noticia-fecha">
           <strong>Fecha de publicación:</strong> {{ p.fecha }}:00 hs
         </p>
-      <div class="compartir-redes" style="margin:32px 0px">
-        <p><strong>COMPARTIR NOTICIA</strong></p>
+        <div class="compartir-redes" style="margin: 32px 0px">
+          <p><strong>COMPARTIR NOTICIA</strong></p>
 
-        <!-- WhatsApp -->
-        <a href="https://wa.me/?text={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}" 
-          target="_blank" title="Compartir por WhatsApp">
-          <img src="{% static 'img/icons/whatsapp.png' %}" alt="WhatsApp" width="50">
-        </a>
+          <!-- WhatsApp -->
+          <a
+            href="https://wa.me/?text={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}"
+            target="_blank"
+            title="Compartir por WhatsApp"
+          >
+            <img
+              src="{% static 'img/icons/whatsapp.png' %}"
+              alt="WhatsApp"
+              width="50"
+            />
+          </a>
 
-        <!-- Facebook -->
-        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}" 
-          target="_blank" title="Compartir en Facebook">
-          <img src="{% static 'img/icons/facebook.png' %}" alt="Facebook" width="50">
-        </a>
+          <!-- Facebook -->
+          <a
+            href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}"
+            target="_blank"
+            title="Compartir en Facebook"
+          >
+            <img
+              src="{% static 'img/icons/facebook.png' %}"
+              alt="Facebook"
+              width="50"
+            />
+          </a>
 
-        <!-- X (Twitter) -->
-        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}" 
-          target="_blank" title="Compartir en X">
-          <img src="{% static 'img/icons/x.png' %}" alt="X" width="50px">
-        </a>
+          <!-- X (Twitter) -->
+          <a
+            href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}"
+            target="_blank"
+            title="Compartir en X"
+          >
+            <img src="{% static 'img/icons/x.png' %}" alt="X" width="50px" />
+          </a>
 
-        <!-- Copiar enlace -->
-        <button onclick="copiarTexto('{{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}')" 
-          title="Copiar enlace" style="background: none; border: none; cursor: pointer;">
-          <img src="{% static 'img/icons/participacion.png' %}" alt="Copiar enlace" width="50">
-        </button>
-      </div>
-
-
+          <!-- Copiar enlace -->
+          <button
+            onclick="copiarTexto('http://{{ request.get_host }}{% url 'noticia_app:noticia_detail' p.id %}')"
+            title="Copiar enlace"
+            style="background: none; border: none; cursor: pointer"
+          >
+            <img
+              src="{% static 'img/icons/participacion.png' %}"
+              alt="Copiar enlace"
+              width="50"
+            />
+          </button>
+        </div>
 
         <p><strong>Medio:</strong> {{ p.medio }}</p>
         <p><strong>Categoría:</strong> {{ p.categoria }}</p>
@@ -59,13 +90,13 @@
 
         <img src="{{ p.portada }}" alt="Portada" class="noticia-portada" />
 
-        <button class="accordion-button">
-          Mostrar / Ocultar Detalles
-        </button>
+        <button class="accordion-button">Mostrar / Ocultar Detalles</button>
 
         <div class="accordion-content">
           <p><strong>Descripción:</strong> {{ p.descripcion }}</p>
-          <p class="p_content_acordeon"><strong>Contenido:</strong> {{ p.contenido|safe }}</p>
+          <p class="p_content_acordeon">
+            <strong>Contenido:</strong> {{ p.contenido|safe }}
+          </p>
 
           <p style="margin-top: 10px">
             <a href="{{ p.url }}" target="_blank">Leer más</a>
@@ -76,32 +107,33 @@
       {% endfor %}
     </div>
 
-    {% if is_paginated %}
-    <nav aria-label="Pagination">
-      <ul class="pagination text-center">
-        {% if page_obj.has_previous %}
-        <li class="pagination-previous">
-          <a href="?page={{ page_obj.previous_page_number }}">ATRÁS</a>
-        </li>
-        {% endif %}
+      {% if is_paginated %}
+        <nav aria-label="Pagination">
+          <ul class="pagination text-center">
+            
+            {% if page_obj.has_previous %}
+              <li class="pagination-previous">
+                <a href="?page={{ page_obj.previous_page_number }}">ATRÁS</a>
+              </li>
+            {% endif %}
 
-        {% for pagina in paginator.page_range %}
-        {% if pagina == page_obj.number %}
-        <li class="current"><span>{{ pagina }}</span></li>
-        {% else %}
-        <li><a href="?page={{ pagina }}">{{ pagina }}</a></li>
-        {% endif %}
-        {% endfor %}
+            {% for pagina in paginator.page_range %}
+              {% if pagina == page_obj.number %}
+                <li class="current"><span>{{ pagina }}</span></li>
+              {% else %}
+                <li><a href="?page={{ pagina }}">{{ pagina }}</a></li>
+              {% endif %}
+            {% endfor %}
 
-        {% if page_obj.has_next %}
-        <li class="pagination-next">
-          <a href="?page={{ page_obj.next_page_number }}">SIGUIENTE</a>
-        </li>
-        {% endif %}
-      </ul>
-    </nav>
-    {% endif %}
+            {% if page_obj.has_next %}
+              <li class="pagination-next">
+                <a href="?page={{ page_obj.next_page_number }}">SIGUIENTE</a>
+              </li>
+            {% endif %}
 
+          </ul>
+        </nav>
+      {% endif %}
     <!-- JavaScript para acordeones -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -118,42 +150,45 @@
         });
       });
 
-      window.addEventListener('DOMContentLoaded', async () => {
-        const mensaje = document.getElementById('mensaje');
-        const spinner = document.getElementById('spinner');
+      window.addEventListener("DOMContentLoaded", async () => {
+        const mensaje = document.getElementById("mensaje");
+        const spinner = document.getElementById("spinner");
 
         const urlParams = new URLSearchParams(window.location.search);
-        const tieneFiltros = urlParams.has('kword') || urlParams.has('fecha1') || urlParams.has('fecha2');
+        const tieneFiltros =
+          urlParams.has("kword") ||
+          urlParams.has("fecha1") ||
+          urlParams.has("fecha2");
 
         if (tieneFiltros) {
-          spinner.style.display = 'none';
+          spinner.style.display = "none";
           if (mensaje) {
-            mensaje.innerText = 'Resultados filtrados 📝';
-            mensaje.style.color = 'white';
+            mensaje.innerText = "Resultados filtrados 📝";
+            mensaje.style.color = "white";
           }
           return;
         }
 
-        if (localStorage.getItem('recargaHecha')) {
+        if (localStorage.getItem("recargaHecha")) {
           if (mensaje) {
-            mensaje.innerText = '🚀 A TRABAJAR 👍';
-            mensaje.style.color = 'white';
+            mensaje.innerText = "🚀 A TRABAJAR 👍";
+            mensaje.style.color = "white";
           }
-          spinner.style.display = 'none';
-          localStorage.removeItem('recargaHecha');
+          spinner.style.display = "none";
+          localStorage.removeItem("recargaHecha");
           return;
         }
 
-        if (spinner) spinner.style.display = 'flex';
+        if (spinner) spinner.style.display = "flex";
 
         try {
-          const resInfobaeShow = await fetch('api/noticias/infobae/show/');
-          const resInfobae = await fetch('api/noticias/infobae/');
-          const resTn = await fetch('/api/noticias/tn/');
-          const resTelefe = await fetch('api/noticias/telefe/');
-          const resTelefeshow = await fetch('api/noticias/telefe/show/');
-          const resTnshow = await fetch('api/noticias/tn/show/');
-          const resClarin = await fetch('/api/noticias/clarin/');
+          const resInfobaeShow = await fetch("api/noticias/infobae/show/");
+          const resInfobae = await fetch("api/noticias/infobae/");
+          const resTn = await fetch("/api/noticias/tn/");
+          const resTelefe = await fetch("api/noticias/telefe/");
+          const resTelefeshow = await fetch("api/noticias/telefe/show/");
+          const resTnshow = await fetch("api/noticias/tn/show/");
+          const resClarin = await fetch("/api/noticias/clarin/");
 
           await Promise.all([
             resInfobae.json(),
@@ -162,30 +197,39 @@
             resTnshow.json(),
             resTelefe.json(),
             resTelefeshow.json(),
-            resClarin.json()
+            resClarin.json(),
           ]);
 
-          localStorage.setItem('recargaHecha', 'true');
+          localStorage.setItem("recargaHecha", "true");
           location.reload();
         } catch (error) {
           console.error(error);
           if (mensaje) {
-            mensaje.innerText = 'Error al actualizar noticias automáticamente';
-            spinner.style.display = 'none';
+            mensaje.innerText = "Error al actualizar noticias automáticamente";
+            spinner.style.display = "none";
           }
         }
       });
     </script>
     <script>
-  function copiarTexto(texto) {
-    navigator.clipboard.writeText(texto).then(() => {
-      alert("¡Enlace copiado al portapapeles!");
-    }).catch(err => {
-      alert("Error al copiar");
-      console.error(err);
-    });
-  }
-</script>
+      function copiarTexto(texto) {
+        // Crear un elemento de texto temporal
+        const input = document.createElement("input");
+        input.value = texto;
+        document.body.appendChild(input);
+
+        // Seleccionarlo y copiarlo
+        input.select();
+        input.setSelectionRange(0, 99999); // Para móviles
+        document.execCommand("copy");
+
+        // Eliminar el input
+        document.body.removeChild(input);
+
+        // Mensaje opcional
+        alert("¡Enlace copiado al portapapeles!");
+      }
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{% static 'js/app.js' %}"></script>
@@ -197,4 +241,3 @@
     </script>
   </body>
 </html>
-
