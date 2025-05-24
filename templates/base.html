@@ -31,9 +31,17 @@
         <p class="noticia-fecha">
           <strong>Fecha de publicación:</strong> {{ p.fecha }}:00 hs
         </p>
-        <div class="compartir-redes" style="margin: 32px 0px">
-          <p><strong>COMPARTIR NOTICIA</strong></p>
-
+                  <!-- verdetalles de la noticia -->
+          <a
+            class="ver_detalles"
+            href="{% url 'noticia_app:noticia_detail' p.id %}"
+            target="_blank"
+            title="VER DETALLES"
+          >
+          VER DETALLES
+          </a>
+        <div class="compartir-redes" style="margin: 32px 0px 32px 0px">
+          <p class="titulo_compartir_noticia">COMPARTIR NOTICIA</p>
           <!-- WhatsApp -->
           <a
             href="https://wa.me/?text={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}"
