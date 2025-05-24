@@ -2,7 +2,10 @@
   display: flex;
   justify-content: center;
 }
-
+.rango_fechas{
+  color:white;
+  margin:0px;
+}
 .logo {
   margin-top: 32px;
 }
@@ -45,7 +48,8 @@
   padding: 32px;
 }
 
-.input-busqueda {
+.input_busqueda {
+  background-color: unset;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
