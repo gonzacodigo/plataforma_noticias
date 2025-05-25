@@ -31,32 +31,29 @@
         <p class="noticia-fecha">
           <strong>Fecha de publicación:</strong> {{ p.fecha }}:00 hs
         </p>
-                  <!-- verdetalles de la noticia -->
-          <a
-            class="ver_detalles"
-            href="{% url 'noticia_app:noticia_detail' p.id %}"
-            target="_blank"
-            title="VER DETALLES"
-          >
+        <!-- verdetalles de la noticia -->
+        <a
+          class="ver_detalles"
+          href="{% url 'noticia_app:noticia_detail' p.id %}"
+          target="_blank"
+          title="VER DETALLES"
+        >
           VER DETALLES
-          </a>
+        </a>
         <div class="compartir-redes" style="margin: 32px 0px 32px 0px">
           <p class="titulo_compartir_noticia">COMPARTIR NOTICIA</p>
           <!-- WhatsApp -->
-        <a
-          href="https://wa.me/?text={{ p.titulo|urlencode }}%0A{{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}"
-          target="_blank"
-          title="Compartir por WhatsApp"
-        >
-          <img
-            src="{% static 'img/icons/whatsapp.png' %}"
-            alt="WhatsApp"
-            width="50"
-        />
-        </a>
-
-
-
+          <a
+            href="https://wa.me/?text={{ p.titulo|urlencode }}%0A{{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}"
+            target="_blank"
+            title="Compartir por WhatsApp"
+          >
+            <img
+              src="{% static 'img/icons/whatsapp.png' %}"
+              alt="WhatsApp"
+              width="50"
+            />
+          </a>
 
           <!-- Facebook -->
           <a
@@ -118,33 +115,26 @@
       {% endfor %}
     </div>
 
-      {% if is_paginated %}
-        <nav aria-label="Pagination">
-          <ul class="pagination text-center">
-            
-            {% if page_obj.has_previous %}
-              <li class="pagination-previous">
-                <a href="?page={{ page_obj.previous_page_number }}">ATRÁS</a>
-              </li>
-            {% endif %}
-
-            {% for pagina in paginator.page_range %}
-              {% if pagina == page_obj.number %}
-                <li class="current"><span>{{ pagina }}</span></li>
-              {% else %}
-                <li><a href="?page={{ pagina }}">{{ pagina }}</a></li>
-              {% endif %}
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-              <li class="pagination-next">
-                <a href="?page={{ page_obj.next_page_number }}">SIGUIENTE</a>
-              </li>
-            {% endif %}
-
-          </ul>
-        </nav>
-      {% endif %}
+    {% if is_paginated %}
+    <nav aria-label="Pagination">
+      <ul class="pagination text-center">
+        {% if page_obj.has_previous %}
+        <li class="pagination-previous">
+          <a href="?page={{ page_obj.previous_page_number }}">ATRÁS</a>
+        </li>
+        {% endif %} {% for pagina in paginator.page_range %} {% if pagina ==
+        page_obj.number %}
+        <li class="current"><span>{{ pagina }}</span></li>
+        {% else %}
+        <li><a href="?page={{ pagina }}">{{ pagina }}</a></li>
+        {% endif %} {% endfor %} {% if page_obj.has_next %}
+        <li class="pagination-next">
+          <a href="?page={{ page_obj.next_page_number }}">SIGUIENTE</a>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
     <!-- JavaScript para acordeones -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
