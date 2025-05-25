@@ -14,7 +14,7 @@
   style="
     text-align: center;
     font-family: 'Montserrat', sans-serif;
-    font-size: 2.5em;
+    font-size: 2em;
     margin-top: 8px;
     color: white;
     font-weight: bold;
@@ -47,13 +47,23 @@
 BUSCADOR DE IMAGENES
 </h3>
 <style>
-    #___gcse_0{
+      #___gcse_0 {
         width: 60%;
         margin: auto;
         padding: 16px;
         border-radius: 16px;
         background-color: #ce00a3;
-    }
+      }
+
+      /* Media query fuera del selector */
+      @media (max-width: 768px) {
+        #___gcse_0 {
+          /* estilos para pantallas pequeñas */
+          width: 90%;
+          padding: 8px;
+        }
+      }
+
     .gcse-search {
       width: 100%; /* O un ancho específico, como 600px */
       max-width: 600px;
