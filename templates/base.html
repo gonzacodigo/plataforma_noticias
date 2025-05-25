@@ -2,7 +2,15 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+      {% block meta_og %}
+      <meta charset="UTF-8" />
+      <!-- Por defecto metadatos genéricos o vacíos -->
+      <meta property="og:title" content="GonDigital" />
+      <meta property="og:description" content="ENTRA A VER ESTA NOTICIA" />
+      <meta property="og:image" content="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}" />
+      <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+      <meta property="og:type" content="website" />
+      {% endblock %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
     <link rel="stylesheet" href="{% static 'css/noticia_list.css' %}" />

@@ -2,11 +2,13 @@
 
 <html>
   <head>
+    {% block meta_og %}
     <meta property="og:title" content="{{ object.titulo }}" />
     <meta property="og:description" content="{{ object.descripcion|truncatechars:120 }}" />
     <meta property="og:image" content="{{ object.portada }}" />
     <meta property="og:url" content="{{ request.build_absolute_uri }}" />
     <meta property="og:type" content="article" />
+    {% endblock %}
 
 
     <title>{% block title %} NOTICIA COMPARTIDA {% endblock title %}</title>
