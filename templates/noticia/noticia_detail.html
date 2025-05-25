@@ -3,6 +3,12 @@
 <html>
   <head>
     <meta charset="utf-8" />
+    <meta property="og:title" content="{{ p.titulo }}" />
+    <meta property="og:description" content="{{ p.descripcion|truncatechars:120 }}" />
+    <meta property="og:image" content="{{ p.portada }}" />
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="article" />
+
     <title>{% block title %} NOTICIA COMPARTIDA {% endblock title %}</title>
     <style>
       .card {
@@ -15,9 +21,6 @@
         object-fit: cover;
       }
     </style>
-    <meta property="og:title" content="{{ p.titulo }}" />
-    <meta property="og:description" content="{{ p.descripcion|truncatechars:120 }}" />
-    <meta property="og:image" content="{{ p.portada }}" />
   </head>
 
   <body>
