@@ -3,7 +3,22 @@
 {% block title %} Noticias {% endblock title %}
 {% block content %}
 {% include 'includes/header.html' %}
+<html>
+  <head>
 
+  <head>
+    {% block meta_og %}
+      <meta property="og:title" content="GonDigital" />
+      <meta property="og:description" content="ENTRA A VER ESTA NOTICIA" />
+      <meta property="og:image" content="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}" />
+      <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+      <meta property="og:type" content="website" />
+    {% endblock %}
+
+
+    <title>{% block title %} GonDigital {% endblock title %}</title>
+
+  </head>
 <div class="div-foto-perfil">
   <img
     src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
@@ -43,3 +58,6 @@
 </div>
 
 {% endblock content %}
+</body>
+
+</html>
