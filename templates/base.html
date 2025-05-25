@@ -44,7 +44,7 @@
           <p class="titulo_compartir_noticia">COMPARTIR NOTICIA</p>
           <!-- WhatsApp -->
           <a
-            href="https://wa.me/?text={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail' p.id %}"
+            href="https://wa.me/?text={{ request.build_absolute_uri|urlencode }}"
             target="_blank"
             title="Compartir por WhatsApp"
           >
@@ -54,6 +54,7 @@
               width="50"
             />
           </a>
+
 
           <!-- Facebook -->
           <a
