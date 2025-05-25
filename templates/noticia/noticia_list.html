@@ -1,58 +1,53 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %} Noticias {% endblock title %}
+
+{% block title %}Noticias{% endblock %}
+
+{% block meta_og %}
+  <meta property="og:title" content="GonDigital" />
+  <meta property="og:description" content="ENTRA A VER ESTA NOTICIA" />
+  <meta property="og:image" content="{{ request.build_absolute_uri }}{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+{% endblock %}
+
 {% block content %}
-{% include 'includes/header.html' %}
-<html>
-  <head>
+  {% include 'includes/header.html' %}
 
-  <head>
-    {% block meta_og %}
-      <meta property="og:title" content="GonDigital" />
-      <meta property="og:description" content="ENTRA A VER ESTA NOTICIA" />
-      <meta property="og:image" content="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}" />
-      <meta property="og:type" content="website" />
-    {% endblock %}
-  </head>
-<div class="div-foto-perfil">
-  <img
-    src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
-    alt="Logo de Desenchufadas"
-    class="logo"
-  />
-</div>
+  <div class="div-foto-perfil">
+    <img
+      src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}"
+      alt="Logo de Desenchufadas"
+      class="logo"
+    />
+  </div>
 
-<h1 class="titulo-principal">
-  PLATAFORMA DE MEDIOS DIGITALES
-</h1>
+  <h1 class="titulo-principal">
+    PLATAFORMA DE MEDIOS DIGITALES
+  </h1>
 
-<section class="busqueda-noticias">
-  <h3 class="titulo-buscar">BUSCAR NOTICIAS</h3>
-  <form method="get" class="form-busqueda">
-    <p class="rango_fechas" style="color:white">Buscar por título</p>
-    <input type="text" id="kword" name="kword" placeholder="Ingrese título..." value="{{ request.GET.kword }}" class="input-busqueda" style="background-color: unset; color:white;" />
-    
-    <p class="rango_fechas" style="color:white">Fecha de inicio</p>
-    <input type="date" name="fecha1" id="fecha1" value="{{ request.GET.fecha1 }}" class="input-busqueda" style="background-color: unset; color:white;" />
-    
-    <p class="rango_fechas" style="color:white">Fecha de final</p>
-    <input type="date" name="fecha2" id="fecha2" value="{{ request.GET.fecha2 }}" class="input-busqueda" style="background-color: unset; color:white;" />
-    
-    <button type="submit" class="btn-consultar">CONSULTAR</button>
-  </form>
-</section>
+  <section class="busqueda-noticias">
+    <h3 class="titulo-buscar">BUSCAR NOTICIAS</h3>
+    <form method="get" class="form-busqueda">
+      <p class="rango_fechas" style="color:white">Buscar por título</p>
+      <input type="text" id="kword" name="kword" placeholder="Ingrese título..." value="{{ request.GET.kword }}" class="input-busqueda" style="background-color: unset; color:white;" />
 
+      <p class="rango_fechas" style="color:white">Fecha de inicio</p>
+      <input type="date" name="fecha1" id="fecha1" value="{{ request.GET.fecha1 }}" class="input-busqueda" style="background-color: unset; color:white;" />
 
-<div class="contenedor-noticias">
-  <div id="mensaje">
-    <div id="spinner" class="div-cargando">
-      <i class="fas fa-spinner fa-spin icon-spinner"></i>
-      <h5 class="texto-cargando">Cargando noticias...</h5>
+      <p class="rango_fechas" style="color:white">Fecha de final</p>
+      <input type="date" name="fecha2" id="fecha2" value="{{ request.GET.fecha2 }}" class="input-busqueda" style="background-color: unset; color:white;" />
+
+      <button type="submit" class="btn-consultar">CONSULTAR</button>
+    </form>
+  </section>
+
+  <div class="contenedor-noticias">
+    <div id="mensaje">
+      <div id="spinner" class="div-cargando">
+        <i class="fas fa-spinner fa-spin icon-spinner"></i>
+        <h5 class="texto-cargando">Cargando noticias...</h5>
+      </div>
     </div>
   </div>
-</div>
-
-{% endblock content %}
-</body>
-
-</html>
+{% endblock %}
