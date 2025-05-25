@@ -13,3 +13,13 @@
 .title-bar{
     height: 3rem;
 }
+
+
+@media (max-width: 768px) {
+.top-bar-left ul.dropdown.menu {
+  display: flex !important;
+  flex-direction: column !important;
+}
+  /* estilos para pantallas pequeñas */
+}
+

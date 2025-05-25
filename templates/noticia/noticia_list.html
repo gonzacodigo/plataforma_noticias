@@ -19,15 +19,19 @@
 <section class="busqueda-noticias">
   <h3 class="titulo-buscar">BUSCAR NOTICIAS</h3>
   <form method="get" class="form-busqueda">
-    <p class="rango_fechas">Buscar por titulo</p>
-    <input type="text" id="kword" name="kword" placeholder="Ingrese título..." value="{{ request.GET.kword }}" class="input-busqueda" style="background-color:unset" />
-    <p class="rango_fechas">Fecha de inicio</p>
-    <input type="date" name="fecha1" id="fecha1" value="{{ request.GET.fecha1 }}" class="input-busqueda" style="background-color:unset"/>
-    <p class="rango_fechas">Fecha de final</p>
-    <input type="date" name="fecha2" id="fecha2" value="{{ request.GET.fecha2 }}" class="input-busqueda" style="background-color:unset"/>
+    <p class="rango_fechas" style="color:white">Buscar por título</p>
+    <input type="text" id="kword" name="kword" placeholder="Ingrese título..." value="{{ request.GET.kword }}" class="input-busqueda" style="background-color: unset; color:white;" />
+    
+    <p class="rango_fechas" style="color:white">Fecha de inicio</p>
+    <input type="date" name="fecha1" id="fecha1" value="{{ request.GET.fecha1 }}" class="input-busqueda" style="background-color: unset; color:white;" />
+    
+    <p class="rango_fechas" style="color:white">Fecha de final</p>
+    <input type="date" name="fecha2" id="fecha2" value="{{ request.GET.fecha2 }}" class="input-busqueda" style="background-color: unset; color:white;" />
+    
     <button type="submit" class="btn-consultar">CONSULTAR</button>
   </form>
 </section>
+
 
 <div class="contenedor-noticias">
   <div id="mensaje">
