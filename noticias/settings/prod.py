@@ -2,7 +2,7 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['142.93.69.64', 'localhost', '127.0.0.1', 'wwww.gondigital.pro', 'gondigital.pro']
+ALLOWED_HOSTS = ['*']
 
 
 # Database
