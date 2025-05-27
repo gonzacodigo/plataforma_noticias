@@ -34,6 +34,55 @@
         <p class="noticia-fecha">
           <strong>Fecha de publicación:</strong> {{ object.fecha }}:00 hs
         </p>
+                <div class="compartir-redes" style="margin: 32px 0px 32px 0px">
+          <p class="titulo_compartir_noticia">COMPARTIR NOTICIA</p>
+          <!-- WhatsApp -->
+        <a
+          href="https://wa.me/?text={{ p.titulo|urlencode }}%0A{{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail_dentro'%}"
+          target="_blank"
+          title="Compartir por WhatsApp"
+        >
+          <img
+            src="{% static 'img/icons/whatsapp.png' %}"
+            alt="WhatsApp"
+            width="50"
+        />
+        </a>
+          <!-- Facebook -->
+          <a
+            href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail_dentro'%}"
+            target="_blank"
+            title="Compartir en Facebook"
+          >
+            <img
+              src="{% static 'img/icons/facebook.png' %}"
+              alt="Facebook"
+              width="50"
+            />
+          </a>
+
+          <!-- X (Twitter) -->
+          <a
+            href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail_dentro'%}"
+            target="_blank"
+            title="Compartir en X"
+          >
+            <img src="{% static 'img/icons/x.png' %}" alt="X" width="50px" />
+          </a>
+
+          <!-- Copiar enlace -->
+          <button
+            onclick="copiarTexto('https://{{ request.get_host }}{% url 'noticia_app:noticia_detail_dentro'%}')"
+            title="Copiar enlace"
+            style="background: none; border: none; cursor: pointer"
+          >
+            <img
+              src="{% static 'img/icons/participacion.png' %}"
+              alt="Copiar enlace"
+              width="50"
+            />
+          </button>
+        </div>
         <p><strong>Medio:</strong> {{ object.medio }}</p>
         <p><strong>Categoría:</strong> {{ object.categoria }}</p>
 
