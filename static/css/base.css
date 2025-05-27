@@ -1,4 +1,7 @@
 .ver_detalles{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-family: 'Montserrat', sans-serif;
   padding: 16px;
   background-color: #ce00a3;
