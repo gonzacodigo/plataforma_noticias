@@ -42,6 +42,6 @@ urlpatterns = [
     path('api/noticias/telefe/', NoticiasTelefeAPIView.as_view(), name='noticias-telefe'),
     path('api/noticias/clarin/', NoticiasclarinAPIView.as_view(), name='noticias-clarin'),
     path('detail-noticia/<pk>/', views.NoticiasDetailView.as_view(), name='noticia_detail'),
-    path('share/', views.NoticiasDetailView.as_view(), name='noticia_detail_dentro'),
+    path('', views.NoticiasDetailView.as_view(), name='noticia_detail_dentro'),
 ]
 
