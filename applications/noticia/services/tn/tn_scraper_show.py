@@ -75,7 +75,7 @@ def scrape_tn_show():
                 continue
 
             # Categorías permitidas explícitamente
-            CATEGORIAS_VALIDAS = ['DEPORTES', 'INTERNACIONAL','POLICIALES', 'POLITICA', 'ECONOMIA']
+            CATEGORIAS_VALIDAS = ['ESPECTACULOS','DEPORTES', 'INTERNACIONAL','POLICIALES', 'POLITICA', 'ECONOMIA']
 
             # Si no está en la lista permitida, asignar "GENERAL"
             if categoria_nombre not in CATEGORIAS_VALIDAS:

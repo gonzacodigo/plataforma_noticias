@@ -64,16 +64,18 @@ def scrape_tn_general():
             # Extraer categoría desde el link
             categoria_link = link_href.split("/")[3] if len(link_href.split("/")) > 3 else "General"
 
+            # Normalizar categoría
+            categoria_nombre = categoria_link.upper()
+            if categoria_nombre == 'SHOW':
+                categoria_nombre = 'ESPECTACULOS'
+
             # Ignorar si la categoría es tipo "watch"
             if categoria_link.lower().startswith('watch'):
                 print('ENLACE IGNORADO PORQUE LA CATEGORIA ES WATCH')
                 continue
 
-            # Normalizar categoría
-            categoria_nombre = categoria_link.upper()
-
             # Categorías permitidas explícitamente
-            CATEGORIAS_VALIDAS = ['DEPORTES', 'INTERNACIONAL','POLICIALES', 'POLITICA', 'ECONOMIA']
+            CATEGORIAS_VALIDAS = ['ESPECTACULOS','DEPORTES', 'INTERNACIONAL','POLICIALES', 'POLITICA', 'ECONOMIA']
 
             # Si no está en la lista permitida, asignar "GENERAL"
             if categoria_nombre not in CATEGORIAS_VALIDAS:
