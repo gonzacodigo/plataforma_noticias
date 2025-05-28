@@ -60,29 +60,7 @@
               width="50"
             />
           </a>
-
-          <!-- X (Twitter) -->
-          <a
-            href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail_dentro'%}"
-            target="_blank"
-            title="Compartir en X"
-          >
-            <img src="{% static 'img/icons/x.png' %}" alt="X" width="50px" />
-          </a>
-
-          <!-- Copiar enlace -->
-          <button
-            onclick="copiarTexto('https://{{ request.get_host }}{% url 'noticia_app:noticia_detail_dentro'%}')"
-            title="Copiar enlace"
-            style="background: none; border: none; cursor: pointer"
-          >
-            <img
-              src="{% static 'img/icons/participacion.png' %}"
-              alt="Copiar enlace"
-              width="50"
-            />
-          </button>
-        </div>
+      </div>
         <p><strong>Medio:</strong> {{ object.medio }}</p>
         <p><strong>Categoría:</strong> {{ object.categoria }}</p>
 
