@@ -3,7 +3,8 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.gondigital.pro']
+ALLOWED_HOSTS = ['www.gondigital.pro', 'gondigital.pro']
+
 
 CSRF_TRUSTED_ORIGINS = ['https://www.gondigital.pro']
 
