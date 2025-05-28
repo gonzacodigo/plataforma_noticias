@@ -140,7 +140,7 @@ def scrape_clarin_general():
                     'fecha': fecha_hora_obj.isoformat(),
                 })
 
-    cache['lanacion_data'] = {
+    cache['clarin_data'] = {
         'data': resultado,
         'timestamp': time.time()
     }
