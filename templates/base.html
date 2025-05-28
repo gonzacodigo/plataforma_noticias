@@ -1,36 +1,47 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-      {% block meta_og %}
-      <meta charset="UTF-8" />
-      <!-- Por defecto metadatos genéricos o vacíos -->
-      <meta property="og:title" content="GonDigital" />
-      <meta property="og:description" content="ENTRA A VER ESTA NOTICIA" />
-      <meta property="og:image" content="{% static 'img/icons/GonDigital.png' %}" />
-      <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-      <meta property="og:type" content="website" />
-      {% endblock %}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="{% static 'img/icons/GonDigital.png' %}">
-    <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/noticia_list.css' %}" />
-    <link
-      rel="stylesheet"
-      href="{% static 'css/lista_noticia_categoria.css' %}"
-    />
-    <link rel="stylesheet" href="{% static 'css/lista_noticia_medio.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-    <title>{% block title %}{% endblock title %}</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- SEO Básico -->
+  <title>{% block title %}GonDigital{% endblock title %}</title>
+  <meta name="description" content="Las últimas noticias y novedades del mundo digital en GonDigital." />
+  <meta name="keywords" content="noticias, actualidad, digital, GonDigital, tecnología, medios" />
+  <meta name="author" content="GonDigital" />
+  <link rel="canonical" href="{{ request.build_absolute_uri }}" />
+
+  <!-- Open Graph para redes sociales -->
+  {% block meta_og %}
+    <meta property="og:title" content="GonDigital" />
+    <meta property="og:description" content="ENTRA A VER ESTA NOTICIA" />
+    <meta property="og:image" content="{% static 'img/icons/GonDigital.png' %}" />
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="website" />
+  {% endblock %}
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GonDigital" />
+  <meta name="twitter:description" content="ENTRA A VER ESTA NOTICIA" />
+  <meta name="twitter:image" content="{% static 'img/icons/GonDigital.png' %}" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'img/icons/GonDigital.png' %}" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/noticia_list.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/lista_noticia_categoria.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/lista_noticia_medio.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+
+  <!-- Fuentes y Librerías -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
   <body class="body_class">
     {% block content %}{% endblock content %}
 
