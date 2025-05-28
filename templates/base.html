@@ -154,7 +154,7 @@
           const resTelefe = await fetch("api/noticias/telefe/");
           const resTelefeshow = await fetch("api/noticias/telefe/show/");
           const resTnshow = await fetch("api/noticias/tn/show/");
-          const resClarin = await fetch("/api/noticias/clarin/");
+          //const resClarin = await fetch("/api/noticias/clarin/");
 
           await Promise.all([
             resInfobae.json(),
@@ -163,7 +163,7 @@
             resTnshow.json(),
             resTelefe.json(),
             resTelefeshow.json(),
-            resClarin.json(),
+           // resClarin.json(),
           ]);
 
           localStorage.setItem("recargaHecha", "true");

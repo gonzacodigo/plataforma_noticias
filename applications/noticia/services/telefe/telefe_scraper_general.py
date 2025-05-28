@@ -90,7 +90,7 @@ def scrape_telefe_general():
             categoria_nombre = categoria_link.upper()
 
             # Categorías permitidas explícitamente
-            CATEGORIAS_VALIDAS = ['DEPORTES', 'INTERNACIONAL','POLICIALES', 'POLITICA', 'ECONOMIA', 'TECNO','MODA','CULTURA','AUTOS']
+            CATEGORIAS_VALIDAS = ['DEPORTES', 'INTERNACIONAL','POLICIALES', 'POLITICA', 'ECONOMIA']
 
             # Si no está en la lista permitida, asignar "GENERAL"
             if categoria_nombre not in CATEGORIAS_VALIDAS:
