@@ -70,8 +70,13 @@ def scrape_infobae_show():
             if categoria_nombre == 'TELESHOW':
                 categoria_nombre = 'ESPECTACULOS'
 
+            # Ignorar si la categoría es tipo "watch"
+            if categoria_link.lower().startswith('watch'):
+                print('ENLACE IGNORADO PORQUE LA CATEGORIA ES WATCH')
+                continue
+
             # Categorías permitidas explícitamente
-            CATEGORIAS_VALIDAS = ['ESPECTACULOS', 'ESPECTACULO']
+            CATEGORIAS_VALIDAS = ['DEPORTES', 'INTERNACIONAL','POLICIALES', 'POLITICA', 'ECONOMIA']
 
             # Si no está en la lista permitida, asignar "GENERAL"
             if categoria_nombre not in CATEGORIAS_VALIDAS:

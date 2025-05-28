@@ -84,9 +84,6 @@ def scrape_infobae_general():
             # Crear o obtener la categoría
             categoria_obj, _ = Categoria.objects.get_or_create(nombre=categoria_nombre)
 
-
-                
-            
             # Obtener el contenido de la noticia completa
             try:
                 article_response = session.get(link_href)
