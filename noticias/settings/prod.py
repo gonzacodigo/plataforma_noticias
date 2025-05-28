@@ -1,8 +1,11 @@
 from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+DEBUG = False
+
+ALLOWED_HOSTS = ['www.gondigital.pro']
+
+CSRF_TRUSTED_ORIGINS = ['https://www.gondigital.pro']
 
 
 # Database
