@@ -1,15 +1,18 @@
-{% extends "base.html" %} {% load static %}
+{% extends "base.html" %}
+{% load static %}
 
 <html>
   <head>
     {% block meta_og %}
     <meta property="og:title" content="{{ object.titulo }}" />
-    <meta property="og:description" content="{{ object.descripcion|truncatechars:120 }}" />
+    <meta
+      property="og:description"
+      content="{{ object.descripcion|truncatechars:120 }}"
+    />
     <meta property="og:image" content="{{ object.portada }}" />
     <meta property="og:url" content="{{ request.build_absolute_uri }}" />
     <meta property="og:type" content="article" />
     {% endblock %}
-
 
     <title>{% block title %} NOTICIA COMPARTIDA {% endblock title %}</title>
     <style>
@@ -26,28 +29,27 @@
   </head>
 
   <body>
-    {% block content %}
-    {% include 'includes/header.html' %}
+    {% block content %} {% include 'includes/header.html' %}
 
-<div class="noticias-container">
+    <div class="noticias-container">
       <div class="noticia-card">
         <p class="noticia-fecha">
           <strong>Fecha de publicación:</strong> {{ object.fecha }}:00 hs
         </p>
-                <div class="compartir-redes" style="margin: 32px 0px 32px 0px">
+        <div class="compartir-redes" style="margin: 32px 0px 32px 0px">
           <p class="titulo_compartir_noticia">COMPARTIR NOTICIA</p>
           <!-- WhatsApp -->
-        <a
-          href="https://wa.me/?text={{ p.titulo|urlencode }}%0A{{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail_dentro'%}"
-          target="_blank"
-          title="Compartir por WhatsApp"
-        >
-          <img
-            src="{% static 'img/icons/whatsapp.png' %}"
-            alt="WhatsApp"
-            width="50"
-        />
-        </a>
+          <a
+            href="https://wa.me/?text={{ p.titulo|urlencode }}%0A{{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail_dentro'%}"
+            target="_blank"
+            title="Compartir por WhatsApp"
+          >
+            <img
+              src="{% static 'img/icons/whatsapp.png' %}"
+              alt="WhatsApp"
+              width="50"
+            />
+          </a>
           <!-- Facebook -->
           <a
             href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|slice:':-1' }}{% url 'noticia_app:noticia_detail_dentro'%}"
@@ -60,20 +62,43 @@
               width="50"
             />
           </a>
-      </div>
+        </div>
         <p><strong>Medio:</strong> {{ object.medio }}</p>
         <p><strong>Categoría:</strong> {{ object.categoria }}</p>
 
         <h4 class="noticia-titulo">{{ object.titulo }}</h4>
 
         <img src="{{ object.portada }}" alt="Portada" class="noticia-portada" />
-          <p><strong>Descripción:</strong> {{ object.descripcion }}</p>
-          <p class="p_content_acordeon"><strong>Contenido:</strong> {{ object.contenido|safe }}</p>
+        <p><strong>Descripción:</strong> {{ object.descripcion }}</p>
+        <p class="p_content_acordeon">
+          <strong>Contenido:</strong> {{ object.contenido|safe }}
+        </p>
 
-          <p style="margin-top: 10px">
-            <a href="{{ p.url }}" target="_blank">Leer más</a>
-          </p>
-          <p><strong>Visitas:</strong> {{ object.visitas }}</p>
+        <div class="noticia-imagenes-adicionales">
+          <h5 class="noticia-titulo">Imágenes adicionales</h5>
+          {% if object.imagenes.all %}
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            {% for img in object.imagenes.all %}
+            <img
+              src="{{ img.url }}"
+              alt="Imagen relacionada {{ forloop.counter }}"
+              style="
+                margin: auto;
+                object-fit: cover;
+                border-radius: 5px;
+              "
+            />
+            {% endfor %}
+          </div>
+          {% else %}
+          <p>No hay imágenes adicionales.</p>
+          {% endif %}
+        </div>
+
+        <p style="margin-top: 10px">
+          <a href="{{ p.url }}" target="_blank">Leer más</a>
+        </p>
+        <p><strong>Visitas:</strong> {{ object.visitas }}</p>
       </div>
     </div>
 

@@ -32,3 +32,15 @@ class Noticia(models.Model):
 
     def __str__(self):
         return self.titulo
+    
+
+class NoticiaImagen(models.Model):
+    noticia = models.ForeignKey(
+        Noticia,
+        on_delete=models.CASCADE,
+        related_name='imagenes'
+    )
+    url = models.URLField(max_length=500)
+
+    def __str__(self):
+        return f"Imagen de: {self.noticia.titulo}"
