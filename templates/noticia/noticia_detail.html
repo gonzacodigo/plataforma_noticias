@@ -94,7 +94,10 @@
           <p>No hay imágenes adicionales.</p>
           {% endif %}
         </div>
-        <p><strong>Visitas:</strong> {{ object.visitas }}</p>
+            <p style="margin-top: 10px">
+            <a href="{{ object.url }}" target="_blank">Leer más</a>
+          </p>
+          <p><strong>Visitas:</strong> {{ object.visitas }}</p>
       </div>
     </div>
 
