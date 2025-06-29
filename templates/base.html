@@ -75,6 +75,27 @@
             <strong>Contenido:</strong> {{ p.contenido|safe }}
           </p>
 
+        <div class="noticia-imagenes-adicionales">
+          <h5 class="noticia-titulo">Imágenes adicionales</h5>
+          {% if p.imagenes.all %}
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            {% for img in p.imagenes.all %}
+            <img
+              src="{{ img.url }}"
+              alt="Imagen relacionada {{ forloop.counter }}"
+              style="
+                margin: auto;
+                object-fit: cover;
+                border-radius: 5px;
+              "
+            />
+            {% endfor %}
+          </div>
+          {% else %}
+          <p>No hay imágenes adicionales.</p>
+          {% endif %}
+        </div>
+
           <p style="margin-top: 10px">
             <a href="{{ p.url }}" target="_blank">Leer más</a>
           </p>
