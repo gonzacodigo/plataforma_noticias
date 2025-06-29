@@ -1,8 +1,15 @@
 from django.contrib import admin
-from .models import Noticia, Categoria
+from .models import Noticia, Categoria, NoticiaImagen
 
-# Registrar el modelo Noticia
-admin.site.register(Noticia)
 
-# Registrar el modelo Categoria
+class NoticiaImagenInline(admin.TabularInline):
+    model = NoticiaImagen
+    extra = 0
+
+class NoticiaAdmin(admin.ModelAdmin):
+    inlines = [NoticiaImagenInline]
+    list_display = ('titulo', 'fecha', 'categoria', 'medio')
+
+
+admin.site.register(Noticia, NoticiaAdmin)
 admin.site.register(Categoria)
