@@ -8,12 +8,27 @@ import pytz
 from django.utils import timezone as django_timezone
 
 # Importaciones de modelos de Django
-from applications.noticia.models import Noticia, Categoria
+from applications.noticia.models import Noticia, Categoria, NoticiaImagen
 from applications.medio.models import Medio
 
 # Definición de cache para evitar múltiples solicitudes a Infobae
 cache = {}
 CACHE_DURATION = 300 # 5 minutos en segundos
+
+def extraer_imagenes_articulo(article, imagen_fallback=None):
+    """Devuelve una lista de URLs de imágenes del artículo."""
+    urls_imagenes = []
+
+    imagenes = article.find_all('img')
+    for img in imagenes:
+        src = img.get('src') or img.get('data-src')
+        if src and src.startswith('http'):
+            urls_imagenes.append(src)
+
+    if not urls_imagenes and imagen_fallback:
+        urls_imagenes = [imagen_fallback]
+
+    return urls_imagenes
 
 def scrape_telefe_general():
     # Verificar si existe información cacheada y si sigue vigente
@@ -191,6 +206,13 @@ def scrape_telefe_general():
                 url=link_href,
                 contenido=contenido,
             )
+            # Extraer imágenes internas
+            urls_imagenes = extraer_imagenes_articulo(article, imagen_url)
+
+
+            for url_img in urls_imagenes:
+                if url_img and url_img != imagen_url:
+                    NoticiaImagen.objects.create(noticia=noticia_obj, url=url_img)
 
             # Agregar noticia a la respuesta
             resultado.append({
@@ -200,6 +222,7 @@ def scrape_telefe_general():
                 'contenido': contenido,
                 'categoria': categoria_obj.nombre,
                 'imageUrl': imagen_url,
+                'urls_imagenes': urls_imagenes,
                 'url': link_href,
                 'fecha': fecha_hora_obj.isoformat(),
             })
