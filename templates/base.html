@@ -16,7 +16,7 @@
   {% block meta_og %}
     <meta property="og:title" content="GonDigital" />
     <meta property="og:description" content="ENTRA A VER ESTA NOTICIA" />
-    <meta property="og:image" content="{% static 'img/icons/GonDigital.png' %}" />
+    <meta property="og:image" content="{% static 'img/icons/GonDigital.svg' %}" />
     <meta property="og:url" content="{{ request.build_absolute_uri }}" />
     <meta property="og:type" content="website" />
   {% endblock %}
@@ -25,10 +25,10 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="GonDigital" />
   <meta name="twitter:description" content="ENTRA A VER ESTA NOTICIA" />
-  <meta name="twitter:image" content="{% static 'img/icons/GonDigital.png' %}" />
+  <meta name="twitter:image" content="{% static 'img/icons/GonDigital.svg' %}" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="{% static 'img/icons/GonDigital.png' %}" />
+  <link rel="icon" type="image/png" href="{% static 'img/icons/GonDigital.svg' %}" />
 
   <!-- CSS -->
   <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
@@ -167,7 +167,7 @@
           spinner.style.display = "none";
           if (mensaje) {
             mensaje.innerText = "Resultados filtrados 📝";
-            mensaje.style.color = "white";
+            mensaje.style.color = "#202123";
           }
           return;
         }
@@ -175,7 +175,7 @@
         if (localStorage.getItem("recargaHecha")) {
           if (mensaje) {
             mensaje.innerText = "🚀 A TRABAJAR 👍";
-            mensaje.style.color = "white";
+            mensaje.style.color = "#202123";
           }
           spinner.style.display = "none";
           localStorage.removeItem("recargaHecha");
