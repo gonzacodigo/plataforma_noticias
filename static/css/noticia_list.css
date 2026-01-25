@@ -7,6 +7,7 @@
   margin:0px;
 }
 .logo {
+  width: 26rem;
   margin-top: 32px;
 }
 
@@ -15,7 +16,7 @@
   font-family: 'Montserrat', sans-serif;
   font-size: 2em;
   margin-top: 8px;
-  color: white;
+  color: #202123;
   font-weight: bold;
 }
 
@@ -34,7 +35,7 @@
   font-family: 'Montserrat', sans-serif;
   font-size: 1.5em;
   margin-top: 8px;
-  color: white;
+  color: #202123;
   font-weight: bold;
 }
 
@@ -58,7 +59,7 @@
 
 .btn-consultar {
   padding: 10px 20px;
-  background-color: #ce00a3;
+  background-color: #202123;
   color: white;
   border: none;
   border-radius: 8px;
@@ -68,7 +69,7 @@
 }
 
 .btn-consultar:hover {
-  background-color: #a3007a;
+  background-color: #202123;
 }
 
 .contenedor-noticias {
@@ -87,10 +88,10 @@
 
 .icon-spinner {
   margin-right: 8px;
-  color: white;
+  color: #202123;
 }
 
 .texto-cargando {
   font-family: 'Montserrat', sans-serif;
-  color: white;
+  color: #202123;
 }

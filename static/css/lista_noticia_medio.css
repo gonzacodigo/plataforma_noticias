@@ -4,7 +4,8 @@
   justify-content: center;
 }
 
-.div_foto_perfil img {
+.logo {
+  width: 26rem;
   margin-top: 32px;
 }
 
@@ -23,13 +24,13 @@ section {
   max-width: 800px;
   margin: 30px auto;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.116);
+  background-color:#D3C1AC;
   border-radius: 12px;
 }
 
 /* Título h3 dentro de section */
 section h3 {
-  background-color: rgba(0, 0, 0, 0.116);
+  background-color:#D3C1AC;
   padding: 16px;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
@@ -65,7 +66,7 @@ select {
 }
 
 select:focus {
-  border-color: #ce00a3;
+  border-color: #202123;
   box-shadow: 0 0 0 3px rgba(206, 0, 163, 0.2);
   outline: none;
 }
@@ -101,7 +102,7 @@ button[type="submit"] {
 
 button[type="submit"] {
   padding: 12px 25px;
-  background-color: #ce00a3;
+  background-color:#D3C1AC;
   color: white;
   border: none;
   border-radius: 8px;

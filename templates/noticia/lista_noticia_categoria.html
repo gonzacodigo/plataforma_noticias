@@ -6,7 +6,9 @@
 {% include 'includes/header.html' %}
 
 <div class="div_foto_perfil">
-  <img src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.svg' %}" alt="Logo de Desenchufadas" />
+  <img src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.png' %}"
+  class="logo"
+  alt="Logo de Desenchufadas" />
 </div>
 
 <h1 class="titulo-principal">
@@ -52,7 +54,7 @@
   }
 
   .categoria-checkbox:hover {
-    background: #f3f3f3;
+    background: #202123;
   }
 
   .categoria-checkbox input[type="checkbox"] {
@@ -62,19 +64,19 @@
   .categoria-checkbox input[type="checkbox"]:checked + span,
   .categoria-checkbox input[type="checkbox"]:checked ~ * {
     font-weight: bold;
-    color: #ce00a3;
+    color: #202123;
   }
 
   .categoria-checkbox input[type="checkbox"]:checked + span::before,
   .categoria-checkbox input[type="checkbox"]:checked {
-    outline: 2px solid #ce00a3;
+    outline: 2px solid #202123;
     background-color: #ffe6f5;
     border-radius: 8px;
   }
 
   .categoria-checkbox:has(input[type="checkbox"]:checked) {
-    border-color: #ce00a3;
-    background-color:rgb(250, 178, 221);
+    border-color: #202123;
+    background-color: #2021237e;
   }
 </style>
 
