@@ -151,6 +151,20 @@ body {
 }
 
 @media (max-width: 768px) {
+  h1.titulo-principal{
+    font-size: 2.3em;
+    font-family:fantasy;
+    color: #202123;
+  }
+  .titulo-buscar{
+    font-size: 2em;
+  }
+  .busqueda-noticias {
+  width: 100%;
+  margin: 30px auto;
+  padding: 6px;
+
+}
   /* estilos para pantallas pequeñas */
 }
 
