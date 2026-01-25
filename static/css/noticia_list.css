@@ -14,7 +14,7 @@
 .titulo-principal {
   text-align: center;
   font-family: 'Montserrat', sans-serif;
-  font-size: 2em;
+  font-size: 5em;
   margin-top: 8px;
   color: #202123;
   font-weight: bold;
@@ -29,7 +29,7 @@
 }
 
 .titulo-buscar {
-  background-color: rgba(0, 0, 0, 0.116);
+  background-color:#9F5515;
   padding: 16px;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
@@ -52,14 +52,14 @@
 .input_busqueda {
   background-color: unset;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #9F5515;
   border-radius: 8px;
   font-size: 1em;
 }
 
 .btn-consultar {
   padding: 10px 20px;
-  background-color: #202123;
+  background-color: #9F5515;
   color: white;
   border: none;
   border-radius: 8px;
@@ -69,7 +69,7 @@
 }
 
 .btn-consultar:hover {
-  background-color: #202123;
+  background-color: rgba(32, 33, 35, 0.423);
 }
 
 .contenedor-noticias {

@@ -17,18 +17,18 @@
 </h1>
 
 <section class="busqueda-noticias">
-  <h3 class="titulo-buscar">BUSCAR NOTICIAS</h3>
+  <h3 class="titulo-buscar" style="color:white; font-size: 2.5em" >BUSCAR NOTICIAS</h3>
   <form method="get" class="form-busqueda">
-    <p class="rango_fechas" style="color:#202123; font-size: 0.9em">Buscar por título</p>
-    <input type="text" id="kword" name="kword" placeholder="Ingrese título..." value="{{ request.GET.kword }}" class="input-busqueda" style="background-color: unset; color:#202123" />
+    <p class="rango_fechas" style="color:white; font-size: 1.2em">TITULO</p>
+    <input type="text" id="kword" name="kword" placeholder="Ingrese título..." value="{{ request.GET.kword }}" class="input-busqueda" style="background-color: #97979785; color:white; font-size: 1.5em" />
     
-    <p class="rango_fechas" style="color:#202123; font-size: 0.9em">Fecha de inicio</p>
-    <input type="date" name="fecha1" id="fecha1" value="{{ request.GET.fecha1 }}" class="input-busqueda" style="background-color: unset; color:#202123;" />
+    <p class="rango_fechas" style="color:white; font-size: 1.2em">FECHA DE INICIO</p>
+    <input type="date" name="fecha1" id="fecha1" value="{{ request.GET.fecha1 }}" class="input-busqueda" style="background-color: #97979785; color:white; font-size: 1.5em" />
     
-    <p class="rango_fechas" style="color:#202123; font-size: 0.9em">Fecha de final</p>
-    <input type="date" name="fecha2" id="fecha2" value="{{ request.GET.fecha2 }}" class="input-busqueda" style="background-color: unset; color:#202123;" />
+    <p class="rango_fechas" style="color:white; font-size: 1.2em">FECHA FINAL</p>
+    <input type="date" name="fecha2" id="fecha2" value="{{ request.GET.fecha2 }}" class="input-busqueda" style="background-color: #97979785; color:white; font-size: 1.5em" />
     
-    <button type="submit" class="btn-consultar">CONSULTAR</button>
+    <button type="submit" class="btn-consultar" style="color:white; font-size: 2em">CONSULTAR</button>
   </form>
 </section>
 
