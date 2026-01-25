@@ -13,7 +13,7 @@
 h1 {
   text-align: center;
   font-family: 'Montserrat', sans-serif;
-  font-size: 2em;
+  font-size: 3em;
   margin-top: 8px;
   color: white;
   font-weight: bold;
@@ -24,13 +24,13 @@ section {
   max-width: 800px;
   margin: 30px auto;
   padding: 20px;
-  background-color:#D3C1AC;
+  background-color:#9F5515;
   border-radius: 12px;
 }
 
 /* Título h3 dentro de section */
 section h3 {
-  background-color:#D3C1AC;
+  background-color:#9F5515;
   padding: 16px;
   text-align: center;
   font-family: 'Montserrat', sans-serif;
@@ -102,7 +102,7 @@ button[type="submit"] {
 
 button[type="submit"] {
   padding: 12px 25px;
-  background-color:#D3C1AC;
+  background-color:rgba(211, 193, 172, 0.538);
   color: white;
   border: none;
   border-radius: 8px;
