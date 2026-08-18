@@ -3,7 +3,7 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.desenchufadas.com', 'desenchufadas.com']
+ALLOWED_HOSTS = ['www.desenchufadas.com', 'desenchufadas.com', '142.93.69.64']
 
 
 CSRF_TRUSTED_ORIGINS = ['https://www.desenchufadas.com']
