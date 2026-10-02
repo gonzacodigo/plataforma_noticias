@@ -1,47 +1,40 @@
-"""agenda URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+from django.urls import path
+from . import views
 
 app_name = "noticia_app"
-
-from django.urls import path
-from .views import NoticiasInfobaeShowAPIView,NoticiasInfobaeAPIView, NoticiasTnAPIView, NoticiasTelefeShowAPIView,NoticiasTelefeAPIView, NoticiasTnShowAPIView, NoticiasclarinAPIView
-from . import views 
 urlpatterns = [
-        path('',
-         views.List_all_noticiasListView.as_view(),
-         name='inicio'
-         ),
-        path('instagram-views',
-         views.InstagramViews.as_view(),
-         name='instagram'
-         ),
-        path('buscador-imagenes',
-         views.Google_imagenes_Views.as_view(),
-         name='buscador_imagenes'
-         ),
-    path('noticia-categoria/', views.ListNoticiaCategoria.as_view(), name='noticia_categoria'),
-    path('noticia-medio/', views.ListNoticiaMedios.as_view(), name='noticia_medio'),
-    path('api/noticias/infobae/show/', NoticiasInfobaeShowAPIView.as_view(), name='noticias-infobae-show'),
-    path('api/noticias/infobae/', NoticiasInfobaeAPIView.as_view(), name='noticias-infobae'),
-    path('api/noticias/tn/', NoticiasTnAPIView.as_view(), name='noticias-tn'),
-    path('api/noticias/tn/show/', NoticiasTnShowAPIView.as_view(), name='noticias-tn-show'),
-    path('api/noticias/telefe/show/', NoticiasTelefeShowAPIView.as_view(), name='noticias-telefe'),
-    path('api/noticias/telefe/', NoticiasTelefeAPIView.as_view(), name='noticias-telefe'),
-    path('api/noticias/clarin/', NoticiasclarinAPIView.as_view(), name='noticias-clarin'),
-    path('detail-noticia/<pk>/', views.NoticiasDetailView.as_view(), name='noticia_detail'),
-    path('', views.NoticiasDetailView.as_view(), name='noticia_detail_dentro'),
+    path("", views.List_all_noticiasListView.as_view(), name="inicio"),
+    path("instagram-views", views.InstagramViews.as_view(), name="instagram"),
+    path(
+        "buscador-imagenes",
+        views.Google_imagenes_Views.as_view(),
+        name="buscador_imagenes",
+    ),
+    path(
+        "noticia-categoria/",
+        views.ListNoticiaCategoria.as_view(),
+        name="noticia_categoria",
+    ),
+    path("noticia-medio/", views.ListNoticiaMedios.as_view(), name="noticia_medio"),
+    path(
+        "detail-noticia/<int:pk>/",
+        views.NoticiasDetailView.as_view(),
+        name="noticia_detail",
+    ),
 ]
-
+for route, source, name in [
+    ("infobae/show", "infobae_show", "noticias-infobae-show"),
+    ("infobae", "infobae", "noticias-infobae"),
+    ("tn", "tn", "noticias-tn"),
+    ("tn/show", "tn_show", "noticias-tn-show"),
+    ("telefe/show", "telefe_show", "noticias-telefe-show"),
+    ("telefe", "telefe", "noticias-telefe"),
+    ("clarin", "clarin", "noticias-clarin"),
+]:
+    urlpatterns.append(
+        path(
+            f"api/noticias/{route}/",
+            views.ScrapeAPIView.as_view(source=source),
+            name=name,
+        )
+    )

@@ -1,6 +1,8 @@
 from django.contrib import admin
-
-# Register your models here.
-
 from .models import Medio
-admin.site.register(Medio)
+
+
+@admin.register(Medio)
+class MedioAdmin(admin.ModelAdmin):
+    search_fields = ("nombre",)
+    list_display = ("nombre", "categoria")

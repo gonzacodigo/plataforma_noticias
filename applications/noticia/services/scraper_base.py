@@ -1,16 +1,11 @@
 from abc import ABC, abstractmethod
-import requests
-from bs4 import BeautifulSoup
+from .engine import fetch_html
+
 
 class ScraperBase(ABC):
-    headers = {'User-Agent': 'Mozilla/5.0'}
-
-    def get_html(self, url):
-        response = requests.get(url, headers=self.headers)
-        if response.status_code == 200:
-            return BeautifulSoup(response.content, 'html.parser')
-        return None
+    def get_html(self, session, url, origin, deadline):
+        return fetch_html(session, url, origin, deadline)
 
     @abstractmethod
     def scrape(self):
-        pass
+        raise NotImplementedError

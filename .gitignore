@@ -172,3 +172,19 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Runtime and private configuration
+secret.json
+.env
+.cache/
+staticfiles/
+media/
+*.sqlite3
+
+# Runtime and private configuration
+secret.json
+.env
+.cache/
+staticfiles/
+media/
+*.sqlite3

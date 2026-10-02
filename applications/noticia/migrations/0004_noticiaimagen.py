@@ -7,16 +7,31 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('noticia', '0003_alter_categoria_nombre'),
+        ("noticia", "0003_alter_categoria_nombre"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='NoticiaImagen',
+            name="NoticiaImagen",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('url', models.URLField(max_length=500)),
-                ('noticia', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='imagenes', to='noticia.noticia')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("url", models.URLField(max_length=500)),
+                (
+                    "noticia",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="imagenes",
+                        to="noticia.noticia",
+                    ),
+                ),
             ],
         ),
     ]

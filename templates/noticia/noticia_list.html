@@ -1,45 +1,11 @@
-{% extends "base.html" %}
-{% load static %}
-{% block title %} GonDigital {% endblock title %}
+{% extends 'base.html' %}{% load static %}
 {% block content %}
-{% include 'includes/header.html' %}
-
-<div class="div-foto-perfil">
-  <img
-    src="{% static 'img/LOGODESENCHUFADAS2-TRANSPARENTE.png' %}"
-    alt="Logo de Desenchufadas"
-    class="logo"
-  />
-</div>
-
-<h1 class="titulo-principal">
-  PLATAFORMA DE MEDIOS DIGITALES
-</h1>
-
-<section class="busqueda-noticias">
-  <h3 class="titulo-buscar" style="color:white" >BUSCAR NOTICIAS</h3>
-  <form method="get" class="form-busqueda">
-    <p class="rango_fechas" style="color:white; font-size: 1.2em">TITULO</p>
-    <input type="text" id="kword" name="kword" placeholder="Ingrese título..." value="{{ request.GET.kword }}" class="input-busqueda" style="background-color: #97979785; color:white; font-size: 1.3em" />
-    
-    <p class="rango_fechas" style="color:white; font-size: 1.2em">FECHA DE INICIO</p>
-    <input type="date" name="fecha1" id="fecha1" value="{{ request.GET.fecha1 }}" class="input-busqueda" style="background-color: #97979785; color:white; font-size: 1.3em" />
-    
-    <p class="rango_fechas" style="color:white; font-size: 1.2em">FECHA FINAL</p>
-    <input type="date" name="fecha2" id="fecha2" value="{{ request.GET.fecha2 }}" class="input-busqueda" style="background-color: #97979785; color:white; font-size: 1.3em" />
-    
-    <button type="submit" class="btn-consultar" style="color:white; font-size: 2em">CONSULTAR</button>
-  </form>
-</section>
-
-
-<div class="contenedor-noticias">
-  <div id="mensaje">
-    <div id="spinner" class="div-cargando">
-      <i class="fas fa-spinner fa-spin icon-spinner"></i>
-      <h5 class="texto-cargando">Cargando noticias...</h5>
-    </div>
-  </div>
-</div>
-
-{% endblock content %}
+<section class="hero wrap" aria-labelledby="hero-title"><div class="hero-copy"><span class="eyebrow"><span class="live-dot"></span> ESPECTÁCULOS · ENTREVISTAS · STREAMING</span><h1 id="hero-title">El espectáculo<br><em>se vive de cerca.</em></h1><p>Famosos, música, televisión y todo lo que da para hablar.<br>Conectate con el universo Desenchufadas.</p><a class="button dark" href="#noticias">Explorá las noticias <span>↓</span></a></div><div class="hero-art" aria-hidden="true"><span class="hero-kicker">EL SHOW SIGUE ACÁ</span><div class="hero-wordmark"><span class="brand-logo"><img src="{% static 'img/logo-desenchufadas-neon.png' %}" width="873" height="876" alt="Desenchufadas" fetchpriority="high"></span></div><div class="hero-tags"><span>FAMOSOS</span><span>MÚSICA</span><span>STREAMING</span></div><span class="art-note">CERCA DE LOS PROTAGONISTAS</span></div></section>
+<div class="topic-strip"><div class="wrap"><span>ESPECTÁCULOS</span><span>✳</span><span>STREAMING</span><span>✳</span><span>MÚSICA</span><span>✳</span><span>DESENCHUFADAS</span></div></div>
+<section class="news-section wrap" id="noticias" aria-labelledby="news-title"><div class="section-heading"><div><span class="eyebrow">LO QUE ENCIENDE LA CONVERSACIÓN</span><h2 id="news-title">Lo que está pasando<span>.</span></h2></div><p>{% if last_run.fin %}Última actualización<br><time datetime="{{ last_run.fin|date:'c' }}">{{ last_run.fin|date:'d M, H:i' }}</time>{% else %}Una selección de noticias<br>de distintos medios{% endif %}</p></div>
+<form method="get" class="search-panel" action="{% url 'noticia_app:inicio' %}"><div class="search-main"><div class="field search-field"><label for="{{ form.kword.id_for_label }}">{{ form.kword.label }}</label>{{ form.kword }}{{ form.kword.errors }}</div><div class="field"><label for="{{ form.categoria.id_for_label }}">Categoría</label>{{ form.categoria }}{{ form.categoria.errors }}</div><div class="field"><label for="{{ form.medio.id_for_label }}">Medio</label>{{ form.medio }}{{ form.medio.errors }}</div><button class="button red" type="submit">Buscar ↗</button></div><details class="date-filters" {% if request.GET.fecha1 or request.GET.fecha2 %}open{% endif %}><summary>Filtrar por fecha</summary><div class="date-fields"><div class="field"><label for="{{ form.fecha1.id_for_label }}">Desde</label>{{ form.fecha1 }}{{ form.fecha1.errors }}</div><div class="field"><label for="{{ form.fecha2.id_for_label }}">Hasta</label>{{ form.fecha2 }}{{ form.fecha2.errors }}</div><a class="reset-link" href="{% url 'noticia_app:inicio' %}#noticias">Limpiar filtros</a></div></details>{{ form.categorias }}{{ form.categorias.errors }}{{ form.non_field_errors }}</form>
+<div class="results-bar"><span>{{ paginator.count }} noticia{{ paginator.count|pluralize:'s' }}{% if request.GET %} en esta búsqueda{% endif %}</span><span>Más recientes primero</span></div>
+<div class="news-grid">{% for noticia in noticias %}{% include 'noticia/_card.html' %}{% empty %}<div class="empty-state"><span>↗</span><h3>{% if form.errors %}Revisá los filtros de búsqueda{% else %}Todavía no hay noticias por acá{% endif %}</h3><p>{% if form.errors %}Corregí los campos indicados para continuar.{% else %}Probá otra palabra, categoría o rango de fechas.{% endif %}</p><a class="button dark" href="{% url 'noticia_app:inicio' %}">Ver todas las noticias</a></div>{% endfor %}</div>
+{% if is_paginated %}<nav class="pagination" aria-label="Páginas de noticias">{% if page_obj.has_previous %}<a href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}#noticias">← Anterior</a>{% endif %}<span>Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>{% if page_obj.has_next %}<a href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}#noticias">Siguiente →</a>{% endif %}</nav>{% endif %}
+</section><section class="community-banner wrap"><span class="banner-star" aria-hidden="true">✳</span><div><span class="eyebrow">LA CONVERSACIÓN SIGUE</span><h2>Más cerca. Más Desenchufadas.</h2><p>Entrevistas, protagonistas y momentos para compartir. Sumate en Instagram.</p></div><a class="button cream" href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer">Seguinos en Instagram ↗</a></section>
+{% endblock %}
