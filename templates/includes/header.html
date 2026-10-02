@@ -1,31 +1,5 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menú Responsive Foundation</title>
-  <link rel="stylesheet" href="{% static 'css/foundation.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/header.css' %}">
-</head>
-<body>
-
-  <!-- Menú responsive: hamburguesa en móvil, horizontal en desktop -->
-  <div class="top-bar" data-responsive-toggle="main-menu" data-hide-for="medium">
-    <button class="menu-icon" type="button" data-toggle></button>
-    <div class="title-bar-title"></div>
-  </div>
-
-  <div class="top-bar" id="main-menu">
-    <div class="top-bar-left">
-      <ul class="dropdown menu" data-dropdown-menu>
-        <li><a href="{% url 'noticia_app:inicio' %}" class="menu-link">INICIO</a></li>
-        <!--<li><a href="{% url 'noticia_app:noticia_categoria' %}" class="menu-link">CATEGORIA</a></li>-->
-        <!--<li><a href="{% url 'noticia_app:noticia_medio' %}" class="menu-link">MEDIOS</a></li>-->
-        <li><a href="{% url 'noticia_app:instagram' %}" class="menu-link">INSTAGRAM</a></li>
-        <li><a href="{% url 'noticia_app:buscador_imagenes' %}" class="menu-link">BUSCADOR DE IMÁGENES</a></li>
-      </ul>
-    </div>
-  </div>
-</body>
-</html>
+{% load static %}<header class="site-header wrap">
+<a href="{% url 'noticia_app:inicio' %}" class="brand" aria-label="Desenchufadas, inicio"><span class="brand-logo"><img src="{% static 'img/logo-desenchufadas-neon.png' %}" width="873" height="876" alt="Desenchufadas" fetchpriority="high"></span></a>
+<button class="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Abrir menú">☰</button>
+<nav id="main-nav" aria-label="Navegación principal"><a href="{% url 'noticia_app:inicio' %}" {% if request.resolver_match.url_name == 'inicio' %}aria-current="page"{% endif %}>Noticias</a><a href="{% url 'noticia_app:instagram' %}" {% if request.resolver_match.url_name == 'instagram' %}aria-current="page"{% endif %}>La comunidad</a><a href="{% url 'noticia_app:buscador_imagenes' %}">Imágenes</a><a class="nav-instagram" href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer">Seguinos ↗</a></nav>
+</header>

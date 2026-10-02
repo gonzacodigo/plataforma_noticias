@@ -9,30 +9,58 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('medio', '0001_initial'),
+        ("medio", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Categoria',
+            name="Categoria",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name='Noticia',
+            name="Noticia",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('titulo', models.CharField(max_length=500)),
-                ('descripcion', models.TextField()),
-                ('contenido', models.TextField(default='Texto por defecto')),
-                ('fecha', models.DateTimeField(verbose_name='Fecha')),
-                ('portada', models.URLField(blank=True, max_length=500)),
-                ('visitas', models.PositiveBigIntegerField(default=0)),
-                ('url', models.URLField(blank=True, max_length=500)),
-                ('categoria', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='categoria_libro', to='noticia.categoria')),
-                ('medio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='medio.medio')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("titulo", models.CharField(max_length=500)),
+                ("descripcion", models.TextField()),
+                ("contenido", models.TextField(default="Texto por defecto")),
+                ("fecha", models.DateTimeField(verbose_name="Fecha")),
+                ("portada", models.URLField(blank=True, max_length=500)),
+                ("visitas", models.PositiveBigIntegerField(default=0)),
+                ("url", models.URLField(blank=True, max_length=500)),
+                (
+                    "categoria",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="categoria_libro",
+                        to="noticia.categoria",
+                    ),
+                ),
+                (
+                    "medio",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="medio.medio"
+                    ),
+                ),
             ],
         ),
     ]
