@@ -2,7 +2,7 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F
-from django.http import JsonResponse
+from django.http import Http404, HttpResponsePermanentRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView
@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.response import Response
 from .forms import BusquedaForm
-from .models import Noticia, ScrapeRun, CopyGenerado
+from .models import Noticia, ScrapeRun, CopyGenerado, NoticiaAlias
 from .services.engine import run_source, ScrapeError, ScrapeBusy
 from .services.copy_ia import generar_copy, CopyIAError
 
@@ -99,7 +99,17 @@ class NoticiasDetailView(DetailView):
         )
 
     def get(self, request, *args, **kwargs):
-        response = super().get(request, *args, **kwargs)
+        try:
+            response = super().get(request, *args, **kwargs)
+        except Http404:
+            alias = (
+                NoticiaAlias.objects.filter(original_id=kwargs.get("pk"))
+                .select_related("noticia")
+                .first()
+            )
+            if alias is None:
+                raise
+            return HttpResponsePermanentRedirect(alias.noticia.get_absolute_url())
         seen = list(request.session.get("seen_news", []))
         if self.object.pk not in seen:
             Noticia.objects.filter(pk=self.object.pk).update(visitas=F("visitas") + 1)

@@ -1,5 +1,5 @@
-{% load static %}<header class="site-header wrap">
+{% load static %}<header class="site-header"><div class="header-inner wrap">
 <a href="{% url 'noticia_app:inicio' %}" class="brand" aria-label="Desenchufadas, inicio"><span class="brand-logo"><img src="{% static 'img/logo-desenchufadas-neon.png' %}" width="873" height="876" alt="Desenchufadas" fetchpriority="high"></span></a>
 <button class="menu-toggle" aria-controls="main-nav" aria-expanded="false" aria-label="Abrir menú">☰</button>
 <nav id="main-nav" aria-label="Navegación principal"><a href="{% url 'noticia_app:inicio' %}" {% if request.resolver_match.url_name == 'inicio' %}aria-current="page"{% endif %}>Noticias</a><a href="{% url 'noticia_app:instagram' %}" {% if request.resolver_match.url_name == 'instagram' %}aria-current="page"{% endif %}>La comunidad</a><a href="{% url 'noticia_app:buscador_imagenes' %}">Imágenes</a><a class="nav-instagram" href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer">Seguinos ↗</a>{% if user.is_authenticated %}<form class="nav-logout" method="post" action="{% url 'noticia_app:salir' %}">{% csrf_token %}<button type="submit">Salir</button></form>{% else %}<a href="{% url 'noticia_app:ingresar' %}" {% if request.resolver_match.url_name == 'ingresar' %}aria-current="page"{% endif %}>Ingresar</a>{% endif %}</nav>
-</header>
+</div></header>

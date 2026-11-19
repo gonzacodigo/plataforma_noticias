@@ -526,9 +526,11 @@ def run_source(source, force=False):
                     if not title or not title.get_text(strip=True) or not link:
                         continue
                     try:
-                        url = allowed_url(
-                            urljoin(spec[1], link.get("href", "")), spec[1]
-                        )
+                        candidate = urljoin(spec[1], link.get("href", ""))
+                        # Las portadas también incluyen promociones de otros sitios.
+                        if urlsplit(candidate).hostname != urlsplit(spec[1]).hostname:
+                            continue
+                        url = allowed_url(candidate, spec[1])
                         path = urlsplit(url).path
                         if (
                             url in seen
@@ -561,9 +563,10 @@ def run_source(source, force=False):
                         run.omitidas += 1
                         errors.append(type(exc).__name__)
                         logger.warning(
-                            "Artículo omitido fuente=%s causa=%s",
+                            "Artículo omitido fuente=%s causa=%s detalle=%s",
                             source,
                             type(exc).__name__,
+                            str(exc) if isinstance(exc, ScrapeError) else "Error de solicitud",
                         )
                 if not run.guardadas and not run.existentes:
                     raise ScrapeError("No se pudo extraer ningún artículo válido.")
