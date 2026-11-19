@@ -1,3 +1,4 @@
+from django.contrib.auth import views as auth_views
 from django.urls import path
 from . import views
 
@@ -21,6 +22,19 @@ urlpatterns = [
         views.NoticiasDetailView.as_view(),
         name="noticia_detail",
     ),
+    path(
+        "detail-noticia/<int:pk>/generar-copy/",
+        views.GenerarCopyView.as_view(),
+        name="generar_copy",
+    ),
+    path(
+        "ingresar/",
+        auth_views.LoginView.as_view(
+            template_name="registration/login.html", redirect_authenticated_user=True
+        ),
+        name="ingresar",
+    ),
+    path("salir/", auth_views.LogoutView.as_view(), name="salir"),
 ]
 for route, source, name in [
     ("infobae/show", "infobae_show", "noticias-infobae-show"),

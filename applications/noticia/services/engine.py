@@ -93,7 +93,56 @@ SOURCES = {
         ".storySummary",
         "time",
     ),
+    "ciudad": (
+        "CIUDAD MAGAZINE",
+        "https://www.ciudad.com.ar/",
+        ".card__body, article.card__container",
+        ".card__headline",
+        "article, .col-content",
+        ".paragraph, p",
+        ".article__dropline",
+        "time",
+    ),
+    "primiciasya": (
+        "PRIMICIAS YA",
+        "https://www.a24.com/primiciasya/",
+        "article.news-item, article.aside-news-item",
+        ".news-title, .aside-news-title",
+        "article",
+        "p",
+        ".news-subtitle, .bajada",
+        "time",
+    ),
+    "pronto": (
+        "PRONTO",
+        "https://www.pronto.com.ar/",
+        "a.news-article",
+        ".news-article__title",
+        "article",
+        "p",
+        ".article-subtitle, .bajada",
+        "time",
+    ),
+    "lanacion_show": (
+        "LA NACION",
+        "https://www.lanacion.com.ar/espectaculos/",
+        "article.mod-article",
+        "h2.com-title",
+        "article",
+        "p",
+        ".com-subhead",
+        "time",
+    ),
 }
+# Fuentes que publican también otros temas: solo se toman estas secciones.
+SECTIONS = {
+    "ciudad": ("/espectaculos/", "/cine-y-series/", "/musica/", "/teatro/", "/exclusivo/"),
+    "primiciasya": ("/primiciasya/",),
+    "pronto": ("/espectaculos/", "/television/"),
+    "lanacion_show": ("/espectaculos/",),
+}
+# Fuentes de espectáculos: toda nota va a esa categoría sin mirar la URL.
+SHOW_SOURCES = {"ciudad", "primiciasya", "pronto"}
 
 
 class ScrapeError(Exception):
@@ -102,6 +151,10 @@ class ScrapeError(Exception):
 
 class ScrapeBusy(ScrapeError):
     pass
+
+
+class EmptyArticle(ScrapeError):
+    """Galerías y videos: la nota existe pero no tiene texto."""
 
 
 def canonical_url(url):
@@ -350,7 +403,7 @@ def extract_article(soup, title, url, source):
         if len(extracted) > len(body):
             body = extracted
     if not body.strip():
-        raise ScrapeError("Artículo sin contenido legible.")
+        raise EmptyArticle("Artículo sin contenido legible.")
     desc_tag = soup.select_one(spec[6]) or soup.select_one(
         'meta[property="og:description"]'
     )
@@ -402,7 +455,7 @@ def extract_article(soup, title, url, source):
         "mundo": "INTERNACIONAL",
     }
     category = next((categories[x] for x in segments if x in categories), "GENERAL")
-    if source.endswith("_show"):
+    if source.endswith("_show") or source in SHOW_SOURCES:
         category = "ESPECTACULOS"
     return {
         "titulo": title[:500],
@@ -461,6 +514,7 @@ def run_source(source, force=False):
                     )
                 medium, _ = Medio.objects.get_or_create(nombre=spec[0])
                 seen = set()
+                empty = 0
                 for card in cards:
                     if (
                         run.detectadas >= settings.SCRAPE_MAX_ARTICLES
@@ -475,23 +529,34 @@ def run_source(source, force=False):
                         url = allowed_url(
                             urljoin(spec[1], link.get("href", "")), spec[1]
                         )
+                        path = urlsplit(url).path
                         if (
                             url in seen
-                            or "/watch" in urlsplit(url).path
+                            or "/watch" in path
                             or (
                                 source.startswith("telefe")
-                                and not re.search(r"pid\d+", urlsplit(url).path)
+                                and not re.search(r"pid\d+", path)
+                            )
+                            or (
+                                source in SECTIONS
+                                and not path.startswith(SECTIONS[source])
                             )
                         ):
                             continue
                         seen.add(url)
                         run.detectadas += 1
+                        if Noticia.objects.filter(medio=medium, url=url).exists():
+                            run.existentes += 1
+                            continue
                         article = fetch_html(session, url, spec[1], deadline)
                         data = extract_article(
                             article, title.get_text(" ", strip=True), url, source
                         )
                         persist_article(data, medium)
                         run.guardadas += 1
+                    except EmptyArticle:
+                        run.omitidas += 1
+                        empty += 1
                     except (requests.RequestException, ScrapeError, ValueError) as exc:
                         run.omitidas += 1
                         errors.append(type(exc).__name__)
@@ -500,14 +565,18 @@ def run_source(source, force=False):
                             source,
                             type(exc).__name__,
                         )
-                if not run.guardadas:
+                if not run.guardadas and not run.existentes:
                     raise ScrapeError("No se pudo extraer ningún artículo válido.")
+                # Unas pocas galerías son normales; muchas indican selectores rotos.
+                if empty > max(run.guardadas, 2):
+                    errors.append("EmptyArticle")
             run.estado = (
                 "partial" if errors or time.monotonic() >= deadline else "success"
             )
             result = {
                 "source": source,
                 "saved": run.guardadas,
+                "known": run.existentes,
                 "skipped": run.omitidas,
                 "status": run.estado,
                 "run_id": run.pk,
@@ -529,10 +598,11 @@ def run_source(source, force=False):
                 run.error = ", ".join(errors)[:1000]
             run.save()
             logger.info(
-                "Actualización fuente=%s estado=%s detectadas=%s guardadas=%s omitidas=%s",
+                "Actualización fuente=%s estado=%s detectadas=%s guardadas=%s existentes=%s omitidas=%s",
                 source,
                 run.estado,
                 run.detectadas,
                 run.guardadas,
+                run.existentes,
                 run.omitidas,
             )

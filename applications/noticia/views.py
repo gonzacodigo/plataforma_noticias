@@ -1,14 +1,19 @@
 from urllib.parse import urlencode
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.response import Response
 from .forms import BusquedaForm
-from .models import Noticia, ScrapeRun
+from .models import Noticia, ScrapeRun, CopyGenerado
 from .services.engine import run_source, ScrapeError, ScrapeBusy
+from .services.copy_ia import generar_copy, CopyIAError
 
 
 class ScrapeThrottle(UserRateThrottle):
@@ -110,8 +115,46 @@ class NoticiasDetailView(DetailView):
             + urlencode({"text": self.object.titulo + "\n" + url}),
             facebook_url="https://www.facebook.com/sharer/sharer.php?"
             + urlencode({"u": url}),
+            copy_ia_habilitado=settings.COPY_IA_HABILITADO,
         )
+        if settings.COPY_IA_HABILITADO and self.request.user.is_authenticated:
+            context["copys_restantes"] = max(
+                0,
+                settings.COPY_IA_LIMITE_MENSUAL
+                - CopyGenerado.usados_este_mes(self.request.user),
+            )
         return context
+
+
+class GenerarCopyView(LoginRequiredMixin, View):
+    http_method_names = ["post"]
+    raise_exception = True
+
+    def post(self, request, pk):
+        if not settings.COPY_IA_HABILITADO:
+            return JsonResponse(
+                {"error": "La generación de copys no está disponible."}, status=503
+            )
+        noticia = get_object_or_404(Noticia, pk=pk)
+        usados = CopyGenerado.usados_este_mes(request.user)
+        if usados >= settings.COPY_IA_LIMITE_MENSUAL:
+            return JsonResponse(
+                {"error": "Alcanzaste el límite de copys de este mes."}, status=429
+            )
+        try:
+            resultado = generar_copy(noticia)
+        except CopyIAError:
+            return JsonResponse(
+                {"error": "No se pudo generar el copy. Probá de nuevo en un rato."},
+                status=502,
+            )
+        CopyGenerado.objects.create(usuario=request.user, noticia=noticia, **resultado)
+        return JsonResponse(
+            {
+                "copy": resultado["texto"],
+                "restantes": settings.COPY_IA_LIMITE_MENSUAL - usados - 1,
+            }
+        )
 
 
 class InstagramViews(TemplateView):

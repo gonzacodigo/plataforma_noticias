@@ -1,6 +1,6 @@
 # Desenchufadas · Plataforma de noticias
 
-Aplicación Django para consultar noticias de Infobae, TN, Telefe y Clarín. La ingesta funciona independientemente de las visitas. El sitio usa CSS propio y JavaScript mínimo, sin Foundation, jQuery o fuentes externas.
+Aplicación Django para consultar noticias de Infobae, TN, Telefe y Clarín, y de los medios de espectáculos Ciudad Magazine, Primicias Ya, Pronto y La Nación Espectáculos. La ingesta funciona independientemente de las visitas. El sitio usa CSS propio y JavaScript mínimo, sin Foundation, jQuery o fuentes externas.
 
 ## Desarrollo
 
@@ -10,11 +10,15 @@ Ejecutar `python manage.py migrate`, `python manage.py createsuperuser` y `pytho
 
 ## Actualización
 
-`python manage.py actualizar_noticias --settings=noticias.settings.prod` actualiza todas las fuentes. `--fuente tn` limita una fuente; `--force` ignora el resultado reciente. Programar el comando cada 10–15 minutos en el sistema de tareas del servidor. Mantener la ejecución fuera de los workers HTTP.
+`python manage.py actualizar_noticias --settings=noticias.settings.prod` actualiza todas las fuentes. `--fuente tn` limita una fuente; `--force` ignora el resultado reciente. Los medios se procesan en paralelo (`--paralelo`, 4 por defecto con PostgreSQL y 1 con SQLite, que no admite escrituras simultáneas); las fuentes de un mismo medio van en orden. Las notas ya guardadas no se vuelven a descargar, por lo que una pasada habitual tarda segundos. Las fuentes que publican otros temas se limitan a sus secciones de espectáculos (`SECTIONS` en `services/engine.py`). Las galerías o videos sin texto se omiten sin marcar la ejecución como parcial, salvo que sean mayoría, lo que indica selectores rotos. Programar el comando cada 10–15 minutos en el sistema de tareas del servidor. Mantener la ejecución fuera de los workers HTTP.
 
 Se limitan artículos, tamaño de respuesta, timeout y duración. Hay bloqueo entre procesos por medio, resultados recientes compartidos en disco y registro de cada ejecución en el administrador. El bloqueo es por host; para varios servidores, usar una cola y un bloqueo distribuidos antes de escalar. Los fallos devuelven código de salida no cero para alertas.
 
 Las rutas históricas `/api/noticias/.../` admiten únicamente POST de administradores autenticados mediante sesión, con CSRF y cuota de seis solicitudes por hora. No se usan desde la página pública. Si una actualización dura demasiado para el proxy, usar el comando programado.
+
+## Copys con IA
+
+Los usuarios con cuenta pueden generar, desde el detalle de cada noticia, un copy para Instagram con la API de Claude. Las cuentas se crean desde el administrador; el acceso es en `/ingresar/`. Definir `ANTHROPIC_API_KEY` en `.env` (sin clave, la función no se muestra), `COPY_IA_MODELO` (por defecto `claude-opus-5-5`) y `COPY_IA_LIMITE_MENSUAL` (copys por usuario y mes, por defecto 100). Cada copy queda registrado con sus tokens en el administrador, en "Copy generados". Usar una clave distinta por entorno y un límite de gasto en la Console de Anthropic. Las pruebas simulan la API y no consumen crédito.
 
 ## Producción
 
