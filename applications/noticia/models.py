@@ -97,6 +97,15 @@ class NoticiaImagen(models.Model):
         return f"Imagen de: {self.noticia.titulo}"
 
 
+class NoticiaAlias(models.Model):
+    """Conserva los enlaces históricos tras unificar noticias repetidas."""
+
+    original_id = models.PositiveBigIntegerField(unique=True)
+    noticia = models.ForeignKey(
+        Noticia, on_delete=models.PROTECT, related_name="aliases"
+    )
+
+
 class CopyGenerado(models.Model):
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="copys"

@@ -13,7 +13,14 @@ from django.db import IntegrityError, transaction, connection
 from django.utils import timezone
 from django.test.utils import CaptureQueriesContext
 from applications.medio.models import Medio
-from .models import Noticia, Categoria, NoticiaImagen, ScrapeRun, CopyGenerado
+from .models import (
+    Noticia,
+    Categoria,
+    NoticiaImagen,
+    ScrapeRun,
+    CopyGenerado,
+    NoticiaAlias,
+)
 from .services.copy_ia import generar_copy, CopyIAError
 from .services.engine import (
     parse_date,
@@ -44,6 +51,17 @@ class SiteTests(TestCase):
             categoria=cls.category,
             url="https://tn.com.ar/politica/especial/",
         )
+
+    def test_historical_duplicate_link_redirects(self):
+        NoticiaAlias.objects.create(original_id=999999, noticia=self.news)
+        response = self.client.get("/detail-noticia/999999/")
+        self.assertEqual(response.status_code, 301)
+        self.assertEqual(response["Location"], self.news.get_absolute_url())
+        self.news.refresh_from_db()
+        self.assertEqual(self.news.visitas, 0)
+
+    def test_unknown_historical_link_still_returns_404(self):
+        self.assertEqual(self.client.get("/detail-noticia/999999/").status_code, 404)
 
     def test_invalid_filters_are_validation_errors(self):
         for params in [
