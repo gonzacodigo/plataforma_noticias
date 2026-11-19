@@ -2,7 +2,10 @@ import json
 import tempfile
 from pathlib import Path
 from datetime import timedelta
+from types import SimpleNamespace
 from unittest.mock import patch
+import anthropic
+import httpx2
 from bs4 import BeautifulSoup
 from django.test import TestCase, SimpleTestCase, override_settings, Client
 from django.contrib.auth import get_user_model
@@ -10,7 +13,8 @@ from django.db import IntegrityError, transaction, connection
 from django.utils import timezone
 from django.test.utils import CaptureQueriesContext
 from applications.medio.models import Medio
-from .models import Noticia, Categoria, NoticiaImagen, ScrapeRun
+from .models import Noticia, Categoria, NoticiaImagen, ScrapeRun, CopyGenerado
+from .services.copy_ia import generar_copy, CopyIAError
 from .services.engine import (
     parse_date,
     canonical_url,
@@ -400,6 +404,99 @@ class PersistenceTests(TestCase):
         self.assertEqual(ScrapeRun.objects.get().estado, "failed")
 
 
+class SourceTests(TestCase):
+    # Fragmentos con la estructura real de cada portada (noviembre de 2026).
+    LISTINGS = {
+        "ciudad": '<div class="card__body"><header><h2 class="card__headline"><a href="/espectaculos/2026/11/18/nota-de-ciudad/">Nota</a></h2></header></div>',
+        "primiciasya": '<article class="news-item news-volanta"><a class="news-link" href="/primiciasya/nota-de-primicias-n1"><h2 class="news-title">Nota</h2></a></article>',
+        "pronto": '<a class="news-article news-article--vertical" href="/espectaculos/2026/11/18/nota-de-pronto.html"><h3 class="news-article__title">Nota</h3></a>',
+        "lanacion_show": '<article class="mod-article"><section class="mod-description"><h2 class="com-title"><a class="com-link" href="/espectaculos/personajes/nota-de-la-nacion/">Nota</a></h2></section></article>',
+    }
+
+    def setUp(self):
+        from django.core.cache import cache
+
+        cache.clear()
+        self.folder = tempfile.TemporaryDirectory()
+        self.addCleanup(self.folder.cleanup)
+        settings_override = override_settings(BASE_DIR=Path(self.folder.name))
+        settings_override.enable()
+        self.addCleanup(settings_override.disable)
+
+    def article(self, text="Contenido de la nota"):
+        return BeautifulSoup(f"<article><p>{text}</p></article>", "html.parser")
+
+    def run_with(self, source, pages):
+        with patch(
+            "applications.noticia.services.engine.fetch_html", side_effect=pages
+        ) as fetch:
+            result = run_source(source, force=True)
+        return result, fetch
+
+    def test_new_source_listings(self):
+        for source, html in self.LISTINGS.items():
+            with self.subTest(source=source):
+                listing = BeautifulSoup(html, "html.parser")
+                result, fetch = self.run_with(source, [listing, self.article()])
+                self.assertEqual((result["saved"], result["status"]), (1, "success"))
+                url = fetch.call_args_list[1].args[1]
+                news = Noticia.objects.get(url=url)
+                self.assertEqual(news.medio.nombre, SOURCES[source][0])
+                self.assertEqual(news.categoria.nombre, "ESPECTACULOS")
+
+    def test_section_filter(self):
+        listing = BeautifulSoup(
+            '<a class="news-article" href="/cocina/receta-de-pronto.html"><h3 class="news-article__title">Receta</h3></a>'
+            + self.LISTINGS["pronto"],
+            "html.parser",
+        )
+        result, fetch = self.run_with("pronto", [listing, self.article()])
+        self.assertEqual(fetch.call_count, 2)
+        self.assertIn("/espectaculos/", fetch.call_args_list[1].args[1])
+        self.assertEqual(result["saved"], 1)
+
+    def test_known_articles_are_not_downloaded_again(self):
+        listing = BeautifulSoup(self.LISTINGS["ciudad"], "html.parser")
+        self.run_with("ciudad", [listing, self.article()])
+        result, fetch = self.run_with("ciudad", [listing])
+        self.assertEqual(fetch.call_count, 1)
+        self.assertEqual((result["saved"], result["known"]), (0, 1))
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(Noticia.objects.count(), 1)
+
+    def test_galleries_without_text(self):
+        cards = "".join(
+            f'<a class="news-article" href="/espectaculos/2026/11/18/nota-{i}.html"><h3 class="news-article__title">Nota {i}</h3></a>'
+            for i in range(5)
+        )
+        listing = BeautifulSoup(cards, "html.parser")
+        empty = BeautifulSoup("<article><img src='x.jpg'></article>", "html.parser")
+        result, _ = self.run_with(
+            "pronto", [listing, empty] + [self.article()] * 4
+        )
+        self.assertEqual((result["saved"], result["skipped"]), (4, 1))
+        self.assertEqual(result["status"], "success")
+        Noticia.objects.all().delete()
+        result, _ = self.run_with("pronto", [listing, self.article()] + [empty] * 4)
+        self.assertEqual((result["saved"], result["skipped"]), (1, 4))
+        self.assertEqual(result["status"], "partial")
+
+    def test_command_runs_every_source_in_parallel_groups(self):
+        from io import StringIO
+        from django.core.management import call_command
+
+        with patch(
+            "applications.noticia.management.commands.actualizar_noticias.run_source",
+            return_value={"saved": 1, "known": 0, "skipped": 0, "status": "success"},
+        ) as run:
+            out = StringIO()
+            call_command("actualizar_noticias", paralelo=3, stdout=out)
+        called = [c.args[0] for c in run.call_args_list]
+        self.assertCountEqual(called, SOURCES)
+        self.assertLess(called.index("infobae"), called.index("infobae_show"))
+        self.assertEqual(out.getvalue().count("guardadas"), len(SOURCES))
+
+
 class NetworkBoundaryTests(SimpleTestCase):
     def response(self, status=200, headers=None, chunks=None):
         from unittest.mock import MagicMock
@@ -537,3 +634,210 @@ class OperationalTests(TestCase):
         self.assertNotContains(
             self.client.get(news.get_absolute_url()), "javascript:alert(1)"
         )
+
+
+def respuesta_claude(texto="¡Volvió con todo! 💃\n#Show", stop_reason="end_turn"):
+    return SimpleNamespace(
+        content=[
+            SimpleNamespace(type="thinking", thinking=""),
+            SimpleNamespace(type="text", text=texto),
+        ],
+        stop_reason=stop_reason,
+        model="claude-opus-5-5",
+        usage=SimpleNamespace(input_tokens=180, output_tokens=240),
+    )
+
+
+class CopyIAServiceTests(SimpleTestCase):
+    def setUp(self):
+        self.noticia = Noticia(
+            titulo="Carmen Barbieri volvió al escenario",
+            descripcion="Tras el alta médica",
+            contenido="Primer párrafo<br>Segundo párrafo",
+        )
+
+    def mock_create(self, cls, response=None, error=None):
+        create = cls.return_value.beta.messages.create
+        create.return_value = response or respuesta_claude()
+        create.side_effect = error
+        return create
+
+    def test_request_and_parsed_result(self):
+        with patch("applications.noticia.services.copy_ia.anthropic.Anthropic") as cls:
+            create = self.mock_create(cls)
+            result = generar_copy(self.noticia)
+        self.assertEqual(result["texto"], "¡Volvió con todo! 💃\n#Show")
+        self.assertEqual(result["modelo"], "claude-opus-5-5")
+        self.assertEqual(
+            (result["tokens_entrada"], result["tokens_salida"]), (180, 240)
+        )
+        kwargs = create.call_args.kwargs
+        self.assertEqual(kwargs["model"], "claude-opus-5-5")
+        self.assertEqual(kwargs["fallbacks"], "default")
+        prompt = kwargs["messages"][0]["content"]
+        self.assertIn("Carmen Barbieri volvió al escenario", prompt)
+        self.assertIn("Primer párrafo\nSegundo párrafo", prompt)
+
+    def test_long_article_is_bounded(self):
+        self.noticia.contenido = "x" * 20000
+        with patch("applications.noticia.services.copy_ia.anthropic.Anthropic") as cls:
+            create = self.mock_create(cls)
+            generar_copy(self.noticia)
+        self.assertLess(len(create.call_args.kwargs["messages"][0]["content"]), 4200)
+
+    def test_refusal_and_empty_are_errors(self):
+        for response in [
+            respuesta_claude(stop_reason="refusal"),
+            respuesta_claude("  "),
+        ]:
+            with patch(
+                "applications.noticia.services.copy_ia.anthropic.Anthropic"
+            ) as cls:
+                self.mock_create(cls, response)
+                with self.assertRaises(CopyIAError):
+                    generar_copy(self.noticia)
+
+    def test_api_errors_are_wrapped(self):
+        request = httpx2.Request("POST", "https://api.anthropic.com/v1/messages")
+        errors = [
+            anthropic.APIStatusError(
+                "fallo", response=httpx2.Response(500, request=request), body=None
+            ),
+            anthropic.APIConnectionError(request=request),
+        ]
+        for error in errors:
+            with patch(
+                "applications.noticia.services.copy_ia.anthropic.Anthropic"
+            ) as cls:
+                self.mock_create(cls, error=error)
+                with self.assertRaises(CopyIAError):
+                    generar_copy(self.noticia)
+
+
+class CopyIAViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.news = Noticia.objects.create(
+            titulo="Una noticia de show",
+            fecha=timezone.now(),
+            medio=Medio.objects.create(nombre="INFOBAE"),
+            categoria=Categoria.objects.create(nombre="ESPECTACULOS"),
+            url="https://www.infobae.com/teleshow/nota/",
+        )
+        cls.user = get_user_model().objects.create_user("cliente", password="pass")
+        cls.url = f"/detail-noticia/{cls.news.pk}/generar-copy/"
+        cls.resultado = {
+            "texto": "Copy de prueba",
+            "modelo": "claude-opus-5-5",
+            "tokens_entrada": 100,
+            "tokens_salida": 50,
+        }
+
+    def test_anonymous_cannot_generate(self):
+        with patch("applications.noticia.views.generar_copy") as generar:
+            self.assertEqual(self.client.post(self.url).status_code, 403)
+            generar.assert_not_called()
+
+    def test_post_only(self):
+        self.client.force_login(self.user)
+        self.assertEqual(self.client.get(self.url).status_code, 405)
+
+    def test_requires_csrf(self):
+        client = Client(enforce_csrf_checks=True)
+        client.force_login(self.user)
+        with patch("applications.noticia.views.generar_copy") as generar:
+            self.assertEqual(client.post(self.url).status_code, 403)
+            generar.assert_not_called()
+
+    def test_generates_and_records_usage(self):
+        self.client.force_login(self.user)
+        with patch(
+            "applications.noticia.views.generar_copy", return_value=self.resultado
+        ):
+            response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"copy": "Copy de prueba", "restantes": 2})
+        record = CopyGenerado.objects.get()
+        self.assertEqual((record.usuario, record.noticia), (self.user, self.news))
+        self.assertEqual((record.tokens_entrada, record.tokens_salida), (100, 50))
+
+    def test_monthly_limit(self):
+        self.client.force_login(self.user)
+        with patch(
+            "applications.noticia.views.generar_copy", return_value=self.resultado
+        ) as generar:
+            statuses = [self.client.post(self.url).status_code for _ in range(4)]
+        self.assertEqual(statuses, [200, 200, 200, 429])
+        self.assertEqual(generar.call_count, 3)
+
+    def test_previous_months_do_not_count(self):
+        for _ in range(3):
+            record = CopyGenerado.objects.create(
+                usuario=self.user, noticia=self.news, texto="viejo", modelo="m"
+            )
+            CopyGenerado.objects.filter(pk=record.pk).update(
+                creado=timezone.now() - timedelta(days=40)
+            )
+        self.assertEqual(CopyGenerado.usados_este_mes(self.user), 0)
+
+    def test_api_failure_is_not_recorded(self):
+        self.client.force_login(self.user)
+        with patch(
+            "applications.noticia.views.generar_copy", side_effect=CopyIAError("x")
+        ):
+            response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 502)
+        self.assertFalse(CopyGenerado.objects.exists())
+
+    def test_unknown_news_is_404(self):
+        self.client.force_login(self.user)
+        self.assertEqual(
+            self.client.post("/detail-noticia/999999/generar-copy/").status_code, 404
+        )
+
+    @override_settings(COPY_IA_HABILITADO=False)
+    def test_disabled_without_api_key(self):
+        self.client.force_login(self.user)
+        self.assertEqual(self.client.post(self.url).status_code, 503)
+        self.assertNotContains(
+            self.client.get(self.news.get_absolute_url()), "Generá un copy con IA"
+        )
+
+    def test_detail_shows_button_or_login(self):
+        response = self.client.get(self.news.get_absolute_url())
+        self.assertContains(response, "/ingresar/?next=")
+        self.assertNotContains(response, "data-copy-ia")
+        self.client.force_login(self.user)
+        response = self.client.get(self.news.get_absolute_url())
+        self.assertContains(response, "data-copy-ia")
+        self.assertContains(response, "Te quedan 3 este mes.")
+
+    def test_login_and_logout(self):
+        self.assertEqual(self.client.get("/ingresar/").status_code, 200)
+        response = self.client.post(
+            "/ingresar/", {"username": "cliente", "password": "mala"}
+        )
+        self.assertContains(response, "Usuario o contraseña incorrectos.")
+        response = self.client.post(
+            "/ingresar/",
+            {
+                "username": "cliente",
+                "password": "pass",
+                "next": self.news.get_absolute_url(),
+            },
+        )
+        self.assertRedirects(response, self.news.get_absolute_url())
+        self.assertContains(self.client.get("/"), "Salir")
+        self.assertRedirects(self.client.post("/salir/"), "/")
+        self.assertContains(self.client.get("/"), "Ingresar")
+
+    def test_external_next_is_ignored(self):
+        response = self.client.post(
+            "/ingresar/",
+            {
+                "username": "cliente",
+                "password": "pass",
+                "next": "https://evil.example/",
+            },
+        )
+        self.assertRedirects(response, "/")

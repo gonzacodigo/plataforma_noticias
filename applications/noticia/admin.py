@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Noticia, Categoria, NoticiaImagen, ScrapeRun
+from .models import Noticia, Categoria, NoticiaImagen, ScrapeRun, CopyGenerado
 
 
 class NoticiaImagenInline(admin.TabularInline):
@@ -32,10 +32,26 @@ class ScrapeRunAdmin(admin.ModelAdmin):
         "estado",
         "detectadas",
         "guardadas",
+        "existentes",
         "omitidas",
     )
     list_filter = ("fuente", "estado")
     readonly_fields = [f.name for f in ScrapeRun._meta.fields]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(CopyGenerado)
+class CopyGeneradoAdmin(admin.ModelAdmin):
+    list_display = ("usuario", "noticia", "modelo", "tokens_entrada", "tokens_salida", "creado")
+    list_filter = ("usuario", "modelo")
+    list_select_related = ("usuario", "noticia")
+    readonly_fields = [f.name for f in CopyGenerado._meta.fields]
+    date_hierarchy = "creado"
 
     def has_add_permission(self, request):
         return False

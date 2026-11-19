@@ -1,5 +1,6 @@
 import re
 from urllib.parse import urlsplit
+from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -96,6 +97,36 @@ class NoticiaImagen(models.Model):
         return f"Imagen de: {self.noticia.titulo}"
 
 
+class CopyGenerado(models.Model):
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="copys"
+    )
+    noticia = models.ForeignKey(
+        Noticia, on_delete=models.SET_NULL, null=True, related_name="copys"
+    )
+    texto = models.TextField()
+    modelo = models.CharField(max_length=60)
+    tokens_entrada = models.PositiveIntegerField(default=0)
+    tokens_salida = models.PositiveIntegerField(default=0)
+    creado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-creado"]
+        indexes = [
+            models.Index(fields=["usuario", "creado"], name="copy_usuario_creado_idx")
+        ]
+
+    @classmethod
+    def usados_este_mes(cls, usuario):
+        inicio = timezone.localtime().replace(
+            day=1, hour=0, minute=0, second=0, microsecond=0
+        )
+        return cls.objects.filter(usuario=usuario, creado__gte=inicio).count()
+
+    def __str__(self):
+        return f"Copy de {self.usuario} ({self.creado:%d/%m/%Y})"
+
+
 class ScrapeRun(models.Model):
     fuente = models.CharField(max_length=40)
     inicio = models.DateTimeField(auto_now_add=True)
@@ -103,6 +134,7 @@ class ScrapeRun(models.Model):
     estado = models.CharField(max_length=20, default="running")
     detectadas = models.PositiveIntegerField(default=0)
     guardadas = models.PositiveIntegerField(default=0)
+    existentes = models.PositiveIntegerField(default=0)
     omitidas = models.PositiveIntegerField(default=0)
     error = models.TextField(blank=True)
 

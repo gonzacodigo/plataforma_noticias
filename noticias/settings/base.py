@@ -133,6 +133,13 @@ CACHES = {
 }
 SCRAPE_MAX_ARTICLES = int(os.environ.get("SCRAPE_MAX_ARTICLES", "30"))
 SCRAPE_BUDGET_SECONDS = int(os.environ.get("SCRAPE_BUDGET_SECONDS", "90"))
+LOGIN_URL = "noticia_app:ingresar"
+LOGIN_REDIRECT_URL = "noticia_app:inicio"
+LOGOUT_REDIRECT_URL = "noticia_app:inicio"
+# La API key la lee el SDK de Anthropic desde ANTHROPIC_API_KEY.
+COPY_IA_HABILITADO = bool(os.environ.get("ANTHROPIC_API_KEY"))
+COPY_IA_MODELO = os.environ.get("COPY_IA_MODELO", "claude-opus-5-5")
+COPY_IA_LIMITE_MENSUAL = int(os.environ.get("COPY_IA_LIMITE_MENSUAL", "100"))
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

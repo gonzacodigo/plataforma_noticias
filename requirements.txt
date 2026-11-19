@@ -3,3 +3,4 @@ requests>=2.32.3,<3
 beautifulsoup4>=4.13.4,<5
 djangorestframework>=3.16,<3.17
 psycopg2-binary>=2.9.10,<3
+anthropic>=2.10,<3
