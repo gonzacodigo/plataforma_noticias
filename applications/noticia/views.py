@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAdminUser
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.response import Response
 from applications.cuentas.utils import limite_copys
+from applications.tendencias.servicio import top_por_categoria
 from .forms import BusquedaForm
 from .models import Noticia, ScrapeRun, CopyGenerado, NoticiaAlias
 from .services.engine import run_source, ScrapeError, ScrapeBusy
@@ -45,6 +46,7 @@ class List_all_noticiasListView(ListView):
     context_object_name = "noticias"
     template_name = "noticia/noticia_list.html"
     paginate_by = 24
+    mostrar_tendencias = True
 
     def get_queryset(self):
         self.form = BusquedaForm(self.request.GET)
@@ -79,15 +81,17 @@ class List_all_noticiasListView(ListView):
             .only("fin")
             .first(),
         )
+        if self.mostrar_tendencias and not self.request.GET:
+            context["tendencias"] = top_por_categoria()
         return context
 
 
 class ListNoticiaCategoria(List_all_noticiasListView):
-    pass
+    mostrar_tendencias = False
 
 
 class ListNoticiaMedios(List_all_noticiasListView):
-    pass
+    mostrar_tendencias = False
 
 
 class NoticiasDetailView(DetailView):

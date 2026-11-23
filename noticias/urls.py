@@ -25,5 +25,6 @@ urlpatterns = [
     ),
     path("admin/", admin.site.urls),
     path("salud/", health, name="health"),
+    path("", include("applications.tendencias.urls")),
     path("", include("applications.noticia.urls")),
 ]

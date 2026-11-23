@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}{{ tendencia.titulo }} · En tendencia · Desenchufadas{% endblock %}
+{% block content %}<section class="trend-page wrap"><a class="back-link" href="{% url 'noticia_app:inicio' %}#tendencias">← Volver a las tendencias</a>
+<header class="trend-header"><span class="eyebrow"><span class="live-dot"></span> EN TENDENCIA · {{ tendencia.categoria }}</span><h1>{{ tendencia.titulo }}</h1>
+<ul class="trend-stats"><li><b>{{ tendencia.cantidad_medios }}</b> medios</li><li><b>{{ tendencia.cantidad_notas }}</b> nota{{ tendencia.cantidad_notas|pluralize:"s" }}</li><li>Primera publicación <b>{{ tendencia.primera_aparicion|date:"d M · H:i" }}</b></li><li>Última <b>{{ tendencia.ultima_aparicion|date:"d M · H:i" }}</b></li></ul>
+{% if not tendencia.activa %}<p class="trend-note">Esta historia ya no está entre las tendencias de las últimas horas.</p>{% endif %}</header>
+<div class="section-heading"><div><span class="eyebrow">CÓMO LA CONTÓ CADA MEDIO</span><h2>De la primera a la última<span>.</span></h2></div><p>{{ tendencia.medios|join:" · " }}</p></div>
+<div class="news-grid">{% for noticia in noticias %}{% include 'noticia/_card.html' %}{% endfor %}</div></section>{% endblock %}

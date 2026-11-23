@@ -1,7 +1,10 @@
 from concurrent.futures import ThreadPoolExecutor
+import logging
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, connections
 from applications.noticia.services.engine import SOURCES, run_source, ScrapeError
+
+logger = logging.getLogger(__name__)
 
 
 def run_group(sources, force):
@@ -68,5 +71,18 @@ class Command(BaseCommand):
                 f"{source}: {result['saved']} guardadas; {result.get('known', 0)} ya existentes; "
                 f"{result['skipped']} omitidas ({result['status']})"
             )
+        self.actualizar_tendencias()
         if failures:
             raise CommandError("Fallaron fuentes: " + ", ".join(failures))
+
+    def actualizar_tendencias(self):
+        from applications.tendencias.servicio import calcular_tendencias
+
+        try:
+            r = calcular_tendencias()
+        except Exception:
+            # Las tendencias nunca deben frenar la ingesta de noticias.
+            logger.exception("No se pudieron calcular las tendencias")
+            self.stderr.write("tendencias: no se pudieron calcular. Revisa el registro.")
+            return
+        self.stdout.write(f"tendencias: {r['activas']} activas ({r['nuevas']} nuevas)")

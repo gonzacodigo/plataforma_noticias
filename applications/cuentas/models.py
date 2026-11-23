@@ -111,6 +111,7 @@ class Visita(models.Model):
         ("copy_ia", "Copy con IA"),
         ("comunidad", "La comunidad"),
         ("imagenes", "Imágenes"),
+        ("tendencia", "Tendencia"),
     ]
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="visitas"

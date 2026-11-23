@@ -7,15 +7,16 @@ from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
-# url_name de noticia_app -> sección registrada.
+# Vista (espacio:nombre) -> sección registrada.
 SECCION_POR_VISTA = {
-    "inicio": "noticias",
-    "noticia_categoria": "categoria",
-    "noticia_medio": "medio",
-    "noticia_detail": "detalle",
-    "generar_copy": "copy_ia",
-    "instagram": "comunidad",
-    "buscador_imagenes": "imagenes",
+    "noticia_app:inicio": "noticias",
+    "noticia_app:noticia_categoria": "categoria",
+    "noticia_app:noticia_medio": "medio",
+    "noticia_app:noticia_detail": "detalle",
+    "noticia_app:generar_copy": "copy_ia",
+    "noticia_app:instagram": "comunidad",
+    "noticia_app:buscador_imagenes": "imagenes",
+    "tendencias:detalle": "tendencia",
 }
 FILTROS = ("categoria", "categorias", "medio", "fecha1", "fecha2", "page")
 
@@ -146,13 +147,12 @@ def registrar_visita(request, response):
         not user.is_authenticated
         or response.status_code != 200
         or match is None
-        or match.namespace != "noticia_app"
-        or match.url_name not in SECCION_POR_VISTA
+        or match.view_name not in SECCION_POR_VISTA
     ):
         return
     if (user.is_staff or user.is_superuser) and not settings.ACTIVIDAD_REGISTRAR_STAFF:
         return
-    seccion = SECCION_POR_VISTA[match.url_name]
+    seccion = SECCION_POR_VISTA[match.view_name]
     if (seccion == "copy_ia") != (request.method == "POST"):
         return
     busqueda = request.GET.get("kword", "").strip()[:200]
@@ -164,6 +164,8 @@ def registrar_visita(request, response):
         if request.GET.get(k)
     }
     noticia_id = match.kwargs.get("pk") if seccion in ("detalle", "copy_ia") else None
+    if seccion == "tendencia":
+        filtros["tendencia"] = match.kwargs.get("pk")
     try:
         Visita.objects.create(
             usuario=user,

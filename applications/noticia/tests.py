@@ -154,8 +154,8 @@ class SiteTests(TestCase):
         with CaptureQueriesContext(connection) as queries:
             response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
-        # Sesión, usuario, cliente, búsqueda, paginación y registro de la visita.
-        self.assertLessEqual(len(queries), 9)
+        # Sesión, usuario, cliente, búsqueda, paginación, tendencias y registro de la visita.
+        self.assertLessEqual(len(queries), 10)
 
     def test_xss_is_escaped_and_legacy_breaks_preserved(self):
         response = self.client.get(self.news.get_absolute_url())

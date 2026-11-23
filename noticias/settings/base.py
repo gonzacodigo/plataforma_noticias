@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "applications.medio",
     "applications.noticia",
     "applications.cuentas",
+    "applications.tendencias",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -143,6 +144,11 @@ LOGOUT_REDIRECT_URL = "noticia_app:ingresar"
 ACTIVIDAD_IP_HEADER = os.environ.get("ACTIVIDAD_IP_HEADER", "")
 ACTIVIDAD_REGISTRAR_STAFF = boolean("ACTIVIDAD_REGISTRAR_STAFF")
 ACTIVIDAD_RETENCION_DIAS = int(os.environ.get("ACTIVIDAD_RETENCION_DIAS", "365"))
+# Tendencias: historias que cuentan varios medios a la vez.
+TENDENCIAS_VENTANA_HORAS = int(os.environ.get("TENDENCIAS_VENTANA_HORAS", "36"))
+TENDENCIAS_MIN_MEDIOS = int(os.environ.get("TENDENCIAS_MIN_MEDIOS", "3"))
+TENDENCIAS_UMBRAL = float(os.environ.get("TENDENCIAS_UMBRAL", "0.22"))
+TENDENCIAS_POR_CATEGORIA = int(os.environ.get("TENDENCIAS_POR_CATEGORIA", "3"))
 # La API key la lee el SDK de Anthropic desde ANTHROPIC_API_KEY.
 COPY_IA_HABILITADO = bool(os.environ.get("ANTHROPIC_API_KEY"))
 COPY_IA_MODELO = os.environ.get("COPY_IA_MODELO", "claude-opus-5-5")
