@@ -136,6 +136,8 @@ CACHES = {
 }
 SCRAPE_MAX_ARTICLES = int(os.environ.get("SCRAPE_MAX_ARTICLES", "30"))
 SCRAPE_BUDGET_SECONDS = int(os.environ.get("SCRAPE_BUDGET_SECONDS", "90"))
+# Notas máximas por medio leído por RSS en cada actualización.
+FEED_MAX_ITEMS = int(os.environ.get("FEED_MAX_ITEMS", "60"))
 LOGIN_URL = "noticia_app:ingresar"
 LOGIN_REDIRECT_URL = "noticia_app:inicio"
 LOGOUT_REDIRECT_URL = "noticia_app:ingresar"
@@ -146,7 +148,9 @@ ACTIVIDAD_REGISTRAR_STAFF = boolean("ACTIVIDAD_REGISTRAR_STAFF")
 ACTIVIDAD_RETENCION_DIAS = int(os.environ.get("ACTIVIDAD_RETENCION_DIAS", "365"))
 # Tendencias: historias que cuentan varios medios a la vez.
 TENDENCIAS_VENTANA_HORAS = int(os.environ.get("TENDENCIAS_VENTANA_HORAS", "36"))
+# Mínimo de medios distintos: Espectáculos y el resto (General, con más medios).
 TENDENCIAS_MIN_MEDIOS = int(os.environ.get("TENDENCIAS_MIN_MEDIOS", "3"))
+TENDENCIAS_MIN_MEDIOS_GENERAL = int(os.environ.get("TENDENCIAS_MIN_MEDIOS_GENERAL", "4"))
 TENDENCIAS_UMBRAL = float(os.environ.get("TENDENCIAS_UMBRAL", "0.22"))
 TENDENCIAS_POR_CATEGORIA = int(os.environ.get("TENDENCIAS_POR_CATEGORIA", "3"))
 # La API key la lee el SDK de Anthropic desde ANTHROPIC_API_KEY.

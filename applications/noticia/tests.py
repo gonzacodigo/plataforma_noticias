@@ -524,10 +524,14 @@ class SourceTests(TestCase):
         ) as run:
             out = StringIO()
             call_command("actualizar_noticias", paralelo=3, stdout=out)
+        from applications.noticia.services.feeds import FEEDS
+
         called = [c.args[0] for c in run.call_args_list]
-        self.assertCountEqual(called, SOURCES)
+        self.assertCountEqual(called, [*SOURCES, *FEEDS])
         self.assertLess(called.index("infobae"), called.index("infobae_show"))
-        self.assertEqual(out.getvalue().count("guardadas"), len(SOURCES))
+        # La Nación: el adaptador de espectáculos y su RSS van en orden (comparten bloqueo).
+        self.assertLess(called.index("lanacion_show"), called.index("lanacion"))
+        self.assertEqual(out.getvalue().count("guardadas"), len(SOURCES) + len(FEEDS))
 
 
 class NetworkBoundaryTests(SimpleTestCase):

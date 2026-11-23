@@ -38,6 +38,11 @@ class Noticia(models.Model):
     fecha_ingesta = models.DateTimeField(default=timezone.now, editable=False)
     actualizado = models.DateTimeField(auto_now=True)
     fecha_estimada = models.BooleanField(default=False)
+    solo_tendencias = models.BooleanField(
+        default=False,
+        help_text="Nota leída por RSS (solo título y bajada): alimenta las tendencias "
+        "pero no aparece en el listado.",
+    )
     objects = NoticiaManager()
 
     class Meta:

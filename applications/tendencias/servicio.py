@@ -5,7 +5,7 @@ from django.conf import settings
 from django.db import transaction
 from django.db.models import Count
 from django.utils import timezone
-from applications.noticia.models import Noticia
+from applications.noticia.models import Categoria, Noticia
 from .models import Tendencia
 from .motor import agrupar, puntaje
 
@@ -29,12 +29,19 @@ def calcular_tendencias(ahora=None):
             "fecha", "fecha_ingesta",
         )
     )
-    grupos = [
-        g
-        for g in agrupar(notas, umbral=settings.TENDENCIAS_UMBRAL)
-        if len({n.medio_id for n in g}) >= settings.TENDENCIAS_MIN_MEDIOS
-    ]
-    lecturas = _lecturas_de_clientes(desde, [n.id for g in grupos for n in g])
+    nombres = dict(Categoria.objects.values_list("id", "nombre"))
+    grupos = []
+    for grupo in agrupar(notas, umbral=settings.TENDENCIAS_UMBRAL):
+        primera, categoria_id = _primera_y_categoria(grupo)
+        # Espectáculos tiene menos medios que lo cubren; el resto (General) exige más.
+        minimo = (
+            settings.TENDENCIAS_MIN_MEDIOS
+            if "ESPECTACULO" in nombres.get(categoria_id, "")
+            else settings.TENDENCIAS_MIN_MEDIOS_GENERAL
+        )
+        if len({n.medio_id for n in grupo}) >= minimo:
+            grupos.append((grupo, primera, categoria_id))
+    lecturas = _lecturas_de_clientes(desde, [n.id for g, _, _ in grupos for n in g])
 
     activas = {
         t.pk: t for t in Tendencia.objects.filter(activa=True).prefetch_related("noticias")
@@ -45,18 +52,12 @@ def calcular_tendencias(ahora=None):
 
     vigentes, nuevas = set(), 0
     with transaction.atomic():
-        for grupo in sorted(grupos, key=len, reverse=True):
+        for grupo, primera, categoria_id in sorted(grupos, key=lambda g: len(g[0]), reverse=True):
             ids = {n.id for n in grupo}
             coincidencias = Counter(
                 tendencia_de_nota[i] for i in ids if i in tendencia_de_nota
             )
             pk = next((pk for pk, _ in coincidencias.most_common() if pk not in vigentes), None)
-            # La primera nota es la que el medio publicó antes: de ella sale el título.
-            primera = min(grupo, key=lambda n: (n.fecha, n.fecha_ingesta, n.id))
-            categorias = Counter(n.categoria_id for n in grupo)
-            categoria_id = max(
-                categorias, key=lambda c: (categorias[c], c == primera.categoria_id)
-            )
             medios = sorted({n.medio.nombre for n in grupo})
             # La recencia del puntaje usa la descarga (confiable); lo visible, la publicación.
             ultima = max(n.fecha_ingesta for n in grupo)
@@ -90,6 +91,16 @@ def calcular_tendencias(ahora=None):
             vigentes.add(tendencia.pk)
         Tendencia.objects.filter(activa=True).exclude(pk__in=vigentes).update(activa=False)
     return {"activas": len(vigentes), "nuevas": nuevas, "notas_analizadas": len(notas)}
+
+
+def _primera_y_categoria(grupo):
+    """La primera nota es la que un medio publicó antes: de ella sale el título.
+
+    La categoría es la más repetida en el grupo; ante un empate, la de la primera.
+    """
+    primera = min(grupo, key=lambda n: (n.fecha, n.fecha_ingesta, n.id))
+    categorias = Counter(n.categoria_id for n in grupo)
+    return primera, max(categorias, key=lambda c: (categorias[c], c == primera.categoria_id))
 
 
 def _lecturas_de_clientes(desde, noticia_ids):

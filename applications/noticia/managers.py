@@ -8,7 +8,8 @@ class NoticiaManager(models.Manager):
         return self.filter(titulo__icontains=kword).order_by("-fecha", "-id")
 
     def buscar_noticia(self, fecha1=None, fecha2=None):
-        queryset = self.filter(fecha__lte=timezone.now())
+        # Las notas solo para tendencias (RSS) no se listan ni se buscan.
+        queryset = self.filter(fecha__lte=timezone.now(), solo_tendencias=False)
         if fecha1:
             day = (
                 datetime.strptime(fecha1, "%Y-%m-%d").date()
@@ -32,7 +33,7 @@ class NoticiaManager(models.Manager):
         return queryset.order_by("-fecha", "-id")
 
     def listar_noticia_categoria(self, categoria_id):
-        return self.filter(categoria_id=categoria_id).order_by("-fecha", "-id")
+        return self.filter(categoria_id=categoria_id, solo_tendencias=False).order_by("-fecha", "-id")
 
     def listar_noticia_medio(self, medio_id):
-        return self.filter(medio_id=medio_id).order_by("-fecha", "-id")
+        return self.filter(medio_id=medio_id, solo_tendencias=False).order_by("-fecha", "-id")

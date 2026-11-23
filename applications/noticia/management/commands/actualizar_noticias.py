@@ -3,6 +3,7 @@ import logging
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection, connections
 from applications.noticia.services.engine import SOURCES, run_source, ScrapeError
+from applications.noticia.services.feeds import FEEDS
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +31,7 @@ class Command(BaseCommand):
     help = "Actualiza las noticias independientemente de las visitas a la página."
 
     def add_arguments(self, parser):
-        parser.add_argument("--fuente", choices=sorted(SOURCES))
+        parser.add_argument("--fuente", choices=sorted([*SOURCES, *FEEDS]))
         parser.add_argument(
             "--force",
             action="store_true",
@@ -44,8 +45,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         groups = {}
-        for source in [options["fuente"]] if options["fuente"] else SOURCES:
-            groups.setdefault(SOURCES[source][0], []).append(source)
+        for source in [options["fuente"]] if options["fuente"] else [*SOURCES, *FEEDS]:
+            medio = SOURCES[source][0] if source in SOURCES else FEEDS[source]["medio"]
+            groups.setdefault(medio, []).append(source)
         workers = options["paralelo"] or (1 if connection.vendor == "sqlite" else 4)
         if workers > 1:
             with ThreadPoolExecutor(max_workers=workers) as pool:

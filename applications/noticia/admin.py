@@ -10,8 +10,8 @@ class NoticiaImagenInline(admin.TabularInline):
 @admin.register(Noticia)
 class NoticiaAdmin(admin.ModelAdmin):
     inlines = [NoticiaImagenInline]
-    list_display = ("titulo", "fecha", "categoria", "medio", "fecha_estimada")
-    list_filter = ("medio", "categoria", "fecha_estimada")
+    list_display = ("titulo", "fecha", "categoria", "medio", "fecha_estimada", "solo_tendencias")
+    list_filter = ("medio", "categoria", "fecha_estimada", "solo_tendencias")
     search_fields = ("titulo",)
     list_select_related = ("categoria", "medio")
     readonly_fields = ("fecha_ingesta", "actualizado")

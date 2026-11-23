@@ -182,11 +182,13 @@ def canonical_url(url):
     )
 
 
-def allowed_url(url, origin, check_dns=False):
+def allowed_url(url, origin, check_dns=False, subdomains=False):
     url = canonical_url(url)
     parts = urlsplit(url)
     domain = urlsplit(origin).hostname.removeprefix("www.")
-    if parts.hostname.removeprefix("www.") != domain or parts.port not in (
+    host = parts.hostname.removeprefix("www.")
+    same_site = host == domain or (subdomains and host.endswith("." + domain))
+    if not same_site or parts.port not in (
         None,
         80,
         443,
@@ -208,12 +210,19 @@ def allowed_url(url, origin, check_dns=False):
     return url
 
 
-def fetch_html(session, url, origin, deadline):
+def fetch_html(session, url, origin, deadline, subdomains=False):
+    return BeautifulSoup(
+        fetch_bytes(session, url, origin, deadline, subdomains=subdomains), "html.parser"
+    )
+
+
+def fetch_bytes(session, url, origin, deadline, accept=("html",), subdomains=False):
+    """Descarga acotada en tiempo y tamaño, solo dentro del dominio del medio."""
     for _ in range(4):
         remaining = deadline - time.monotonic()
         if remaining <= 0:
             raise ScrapeError("Tiempo máximo de actualización alcanzado.")
-        url = allowed_url(url, origin, check_dns=True)
+        url = allowed_url(url, origin, check_dns=True, subdomains=subdomains)
         with session.get(
             url,
             timeout=(min(5, remaining), min(12, remaining)),
@@ -224,15 +233,20 @@ def fetch_html(session, url, origin, deadline):
                 url = urljoin(url, response.headers.get("Location", ""))
                 continue
             response.raise_for_status()
-            if "html" not in response.headers.get("Content-Type", "text/html").lower():
-                raise ScrapeError("La fuente no devolvió HTML.")
+            content_type = response.headers.get("Content-Type", "text/html").lower()
+            if not any(kind in content_type for kind in accept):
+                raise ScrapeError(
+                    "La fuente no devolvió HTML."
+                    if accept == ("html",)
+                    else "La fuente no devolvió el formato esperado."
+                )
             chunks, size = [], 0
             for chunk in response.iter_content(65536):
                 size += len(chunk)
                 if size > 8 * 1024 * 1024 or time.monotonic() > deadline:
                     raise ScrapeError("Respuesta demasiado grande o lenta.")
                 chunks.append(chunk)
-            return BeautifulSoup(b"".join(chunks), "html.parser")
+            return b"".join(chunks)
     raise ScrapeError("Demasiadas redirecciones.")
 
 
@@ -442,19 +456,7 @@ def extract_article(soup, title, url, source):
             for tag in (root.select("img") if root else [])
         )
     )
-    segments = urlsplit(url).path.lower().split("/")
-    categories = {
-        "teleshow": "ESPECTACULOS",
-        "show": "ESPECTACULOS",
-        "espectaculos": "ESPECTACULOS",
-        "deportes": "DEPORTES",
-        "politica": "POLITICA",
-        "economia": "ECONOMIA",
-        "policiales": "POLICIALES",
-        "internacional": "INTERNACIONAL",
-        "mundo": "INTERNACIONAL",
-    }
-    category = next((categories[x] for x in segments if x in categories), "GENERAL")
+    category = categoria_por_url(url)
     if source.endswith("_show") or source in SHOW_SOURCES:
         category = "ESPECTACULOS"
     return {
@@ -468,6 +470,29 @@ def extract_article(soup, title, url, source):
         "imagenes": [u for u in images if u and u != cover][:30],
         "url": url,
     }
+
+
+CATEGORIAS_POR_SECCION = {
+    "teleshow": "ESPECTACULOS",
+    "show": "ESPECTACULOS",
+    "espectaculos": "ESPECTACULOS",
+    "deportes": "DEPORTES",
+    "politica": "POLITICA",
+    "economia": "ECONOMIA",
+    "finanzas": "ECONOMIA",
+    "policiales": "POLICIALES",
+    "internacional": "INTERNACIONAL",
+    "mundo": "INTERNACIONAL",
+    "el-mundo": "INTERNACIONAL",
+}
+
+
+def categoria_por_url(url):
+    segments = urlsplit(url).path.lower().split("/")
+    return next(
+        (CATEGORIAS_POR_SECCION[x] for x in segments if x in CATEGORIAS_POR_SECCION),
+        "GENERAL",
+    )
 
 
 @transaction.atomic
@@ -488,6 +513,10 @@ def persist_article(data, medium):
 
 
 def run_source(source, force=False):
+    from .feeds import FEEDS, run_feed
+
+    if source in FEEDS:
+        return run_feed(source, force=force)
     if source not in SOURCES:
         raise ScrapeError("Fuente desconocida.")
     spec = SOURCES[source]
