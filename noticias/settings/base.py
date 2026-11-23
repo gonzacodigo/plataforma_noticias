@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "applications.medio",
     "applications.noticia",
+    "applications.cuentas",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -68,6 +69,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "applications.cuentas.middleware.AccesoClientesMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "noticias.middleware.SecurityHeadersMiddleware",
 ]
@@ -135,7 +137,12 @@ SCRAPE_MAX_ARTICLES = int(os.environ.get("SCRAPE_MAX_ARTICLES", "30"))
 SCRAPE_BUDGET_SECONDS = int(os.environ.get("SCRAPE_BUDGET_SECONDS", "90"))
 LOGIN_URL = "noticia_app:ingresar"
 LOGIN_REDIRECT_URL = "noticia_app:inicio"
-LOGOUT_REDIRECT_URL = "noticia_app:inicio"
+LOGOUT_REDIRECT_URL = "noticia_app:ingresar"
+# Registro de actividad de los clientes.
+# Cabecera con la IP real cuando hay un proxy confiable delante (ej. HTTP_X_REAL_IP).
+ACTIVIDAD_IP_HEADER = os.environ.get("ACTIVIDAD_IP_HEADER", "")
+ACTIVIDAD_REGISTRAR_STAFF = boolean("ACTIVIDAD_REGISTRAR_STAFF")
+ACTIVIDAD_RETENCION_DIAS = int(os.environ.get("ACTIVIDAD_RETENCION_DIAS", "365"))
 # La API key la lee el SDK de Anthropic desde ANTHROPIC_API_KEY.
 COPY_IA_HABILITADO = bool(os.environ.get("ANTHROPIC_API_KEY"))
 COPY_IA_MODELO = os.environ.get("COPY_IA_MODELO", "claude-opus-5-5")

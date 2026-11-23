@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.db import connection
 from django.urls import path, include
 from django.views.decorators.http import require_GET
+from applications.cuentas.panel import panel_uso, panel_usuario
 
 
 @require_GET
@@ -16,6 +17,12 @@ def health(request):
 
 
 urlpatterns = [
+    path("admin/panel/", admin.site.admin_view(panel_uso), name="panel_uso"),
+    path(
+        "admin/panel/usuario/<int:pk>/",
+        admin.site.admin_view(panel_usuario),
+        name="panel_usuario",
+    ),
     path("admin/", admin.site.urls),
     path("salud/", health, name="health"),
     path("", include("applications.noticia.urls")),

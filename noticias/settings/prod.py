@@ -30,6 +30,8 @@ if boolean("USE_SQLITE"):
         "Producción requiere PostgreSQL. Define USE_SQLITE=false en el entorno del servidor."
     )
 DATABASES = database()
+# nginx fija X-Real-IP con la IP del visitante.
+ACTIVIDAD_IP_HEADER = os.environ.get("ACTIVIDAD_IP_HEADER", "HTTP_X_REAL_IP")
 SECURE_SSL_REDIRECT = boolean("SECURE_SSL_REDIRECT", True)
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

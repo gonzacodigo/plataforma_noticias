@@ -12,6 +12,7 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError, transaction, connection
 from django.utils import timezone
 from django.test.utils import CaptureQueriesContext
+from applications.cuentas.models import Cliente, Perfil
 from applications.medio.models import Medio
 from .models import (
     Noticia,
@@ -37,6 +38,15 @@ from .services.engine import (
 )
 
 
+def usuario_cliente(username="lector", **cliente):
+    user = get_user_model().objects.create_user(username, password="pass")
+    Perfil.objects.create(
+        usuario=user,
+        cliente=Cliente.objects.create(nombre=f"Cliente {username}", **cliente),
+    )
+    return user
+
+
 class SiteTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -51,6 +61,10 @@ class SiteTests(TestCase):
             categoria=cls.category,
             url="https://tn.com.ar/politica/especial/",
         )
+        cls.lector = usuario_cliente()
+
+    def setUp(self):
+        self.client.force_login(self.lector)
 
     def test_historical_duplicate_link_redirects(self):
         NoticiaAlias.objects.create(original_id=999999, noticia=self.news)
@@ -140,7 +154,8 @@ class SiteTests(TestCase):
         with CaptureQueriesContext(connection) as queries:
             response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
-        self.assertLessEqual(len(queries), 5)
+        # Sesión, usuario, cliente, búsqueda, paginación y registro de la visita.
+        self.assertLessEqual(len(queries), 9)
 
     def test_xss_is_escaped_and_legacy_breaks_preserved(self):
         response = self.client.get(self.news.get_absolute_url())
@@ -639,6 +654,7 @@ class OperationalTests(TestCase):
                 )
 
     def test_unsafe_legacy_source_url_hidden(self):
+        self.client.force_login(usuario_cliente())
         category = Categoria.objects.create(nombre="GENERAL")
         medium = Medio.objects.create(nombre="TEST")
         news = Noticia.objects.create(
@@ -742,7 +758,7 @@ class CopyIAViewTests(TestCase):
             categoria=Categoria.objects.create(nombre="ESPECTACULOS"),
             url="https://www.infobae.com/teleshow/nota/",
         )
-        cls.user = get_user_model().objects.create_user("cliente", password="pass")
+        cls.user = usuario_cliente("cliente")
         cls.url = f"/detail-noticia/{cls.news.pk}/generar-copy/"
         cls.resultado = {
             "texto": "Copy de prueba",
@@ -821,10 +837,11 @@ class CopyIAViewTests(TestCase):
             self.client.get(self.news.get_absolute_url()), "Generá un copy con IA"
         )
 
-    def test_detail_shows_button_or_login(self):
+    def test_detail_requires_login_and_shows_button(self):
         response = self.client.get(self.news.get_absolute_url())
-        self.assertContains(response, "/ingresar/?next=")
-        self.assertNotContains(response, "data-copy-ia")
+        self.assertRedirects(
+            response, "/ingresar/?next=" + self.news.get_absolute_url()
+        )
         self.client.force_login(self.user)
         response = self.client.get(self.news.get_absolute_url())
         self.assertContains(response, "data-copy-ia")
@@ -846,7 +863,7 @@ class CopyIAViewTests(TestCase):
         )
         self.assertRedirects(response, self.news.get_absolute_url())
         self.assertContains(self.client.get("/"), "Salir")
-        self.assertRedirects(self.client.post("/salir/"), "/")
+        self.assertRedirects(self.client.post("/salir/"), "/ingresar/")
         self.assertContains(self.client.get("/"), "Ingresar")
 
     def test_external_next_is_ignored(self):

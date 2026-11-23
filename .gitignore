@@ -188,3 +188,6 @@ secret.json
 staticfiles/
 media/
 *.sqlite3
+
+# Respaldos locales de la base de desarrollo
+*.sqlite3.*.bak

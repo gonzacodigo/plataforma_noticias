@@ -1,5 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
+from applications.cuentas.forms import IngresoForm
 from . import views
 
 app_name = "noticia_app"
@@ -30,7 +31,9 @@ urlpatterns = [
     path(
         "ingresar/",
         auth_views.LoginView.as_view(
-            template_name="registration/login.html", redirect_authenticated_user=True
+            template_name="registration/login.html",
+            authentication_form=IngresoForm,
+            redirect_authenticated_user=True,
         ),
         name="ingresar",
     ),

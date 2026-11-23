@@ -1,0 +1,2 @@
+{% extends "admin/index.html" %}
+{% block content %}{% if perms.cuentas.view_visita %}<div class="module" style="margin-bottom:20px"><table style="width:100%"><caption>Clientes y uso</caption><tbody><tr><th scope="row"><a href="{% url 'panel_uso' %}">Panel de uso</a></th><td>Actividad de cada usuario, secciones, búsquedas, vencimientos y alertas.</td></tr></tbody></table></div>{% endif %}{{ block.super }}{% endblock %}

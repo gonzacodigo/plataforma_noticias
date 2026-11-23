@@ -1,0 +1,1 @@
+{% if filas %}<div class="pu-hbar">{% for f in filas %}<span class="pu-et" title="{{ f.etiqueta }}">{{ f.etiqueta }}</span><span class="pu-tr" title="{{ f.etiqueta }}: {{ f.valor }}"><i style="width:{{ f.pct|stringformat:'s' }}%"></i></span><span class="pu-val">{{ f.valor }}</span>{% endfor %}</div>{% else %}<p class="pu-vacio">Sin datos en el período.</p>{% endif %}

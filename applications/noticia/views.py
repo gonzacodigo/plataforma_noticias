@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser
 from rest_framework.throttling import UserRateThrottle
 from rest_framework.response import Response
+from applications.cuentas.utils import limite_copys
 from .forms import BusquedaForm
 from .models import Noticia, ScrapeRun, CopyGenerado, NoticiaAlias
 from .services.engine import run_source, ScrapeError, ScrapeBusy
@@ -130,7 +131,7 @@ class NoticiasDetailView(DetailView):
         if settings.COPY_IA_HABILITADO and self.request.user.is_authenticated:
             context["copys_restantes"] = max(
                 0,
-                settings.COPY_IA_LIMITE_MENSUAL
+                limite_copys(self.request.user)
                 - CopyGenerado.usados_este_mes(self.request.user),
             )
         return context
@@ -147,7 +148,8 @@ class GenerarCopyView(LoginRequiredMixin, View):
             )
         noticia = get_object_or_404(Noticia, pk=pk)
         usados = CopyGenerado.usados_este_mes(request.user)
-        if usados >= settings.COPY_IA_LIMITE_MENSUAL:
+        limite = limite_copys(request.user)
+        if usados >= limite:
             return JsonResponse(
                 {"error": "Alcanzaste el límite de copys de este mes."}, status=429
             )
@@ -162,7 +164,7 @@ class GenerarCopyView(LoginRequiredMixin, View):
         return JsonResponse(
             {
                 "copy": resultado["texto"],
-                "restantes": settings.COPY_IA_LIMITE_MENSUAL - usados - 1,
+                "restantes": limite - usados - 1,
             }
         )
 

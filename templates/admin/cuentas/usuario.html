@@ -1,0 +1,35 @@
+{% extends "admin/base_site.html" %}
+{% block extrastyle %}{{ block.super }}{% include "admin/cuentas/_estilos.html" %}{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Inicio</a> › <a href="{% url 'panel_uso' %}?dias={{ dias }}">Panel de uso</a> › {{ usuario_obj.username }}</div>{% endblock %}
+{% block content %}
+<p>{% if cliente %}Cliente: <a href="{% url 'admin:cuentas_cliente_change' cliente.pk %}">{{ cliente }}</a>{% if cliente.vencimiento %} · vence el {{ cliente.vencimiento|date:"d/m/Y" }}{% endif %}{% else %}<span class="pu-st warning">Sin cliente asignado</span>{% endif %}
+ · <a href="{% url 'admin:auth_user_change' usuario_obj.pk %}">Editar usuario</a>
+ · Último ingreso: {{ usuario_obj.last_login|date:"d/m/Y H:i"|default:"nunca" }}</p>
+<nav class="pu-periodo" aria-label="Período"><span>Período:</span>{% for p in periodos %}<a href="?dias={{ p }}" {% if p == dias %}aria-current="true"{% endif %}>Últimos {{ p }} días</a>{% endfor %}</nav>
+
+<div class="pu-kpis">
+  <div class="pu-kpi"><span>Páginas vistas</span><b>{{ resumen.total }}</b></div>
+  <div class="pu-kpi"><span>Días activos</span><b>{{ resumen.dias_activos }}</b><small>de {{ dias }} días</small></div>
+  <div class="pu-kpi"><span>Copys con IA</span><b>{{ copys_total }}</b></div>
+  <div class="pu-kpi"><span>IP distintas</span><b>{{ resumen.ips }}</b><small>{{ resumen.sesiones }} sesiones</small></div>
+</div>
+
+<div class="pu-grid">
+  <section class="pu-card pu-wide"><h2>Páginas vistas por día</h2><p class="pu-sub">{{ usuario_obj.username }}</p>
+    {% include "admin/cuentas/_columnas.html" with serie=serie_diaria titulo="Páginas vistas por día" eje="Día" unidad="páginas vistas" %}</section>
+  <section class="pu-card"><h2>Uso por sección</h2><p class="pu-sub">Páginas vistas en el período</p>{% include "admin/cuentas/_barras.html" with filas=secciones %}</section>
+  <section class="pu-card"><h2>Horario de uso</h2><p class="pu-sub">Según la hora del día</p>{% include "admin/cuentas/_columnas.html" with serie=serie_horaria titulo="Páginas vistas por hora" eje="Hora" unidad="páginas vistas" %}</section>
+  <section class="pu-card"><h2>Búsquedas</h2><p class="pu-sub">Las más repetidas</p>
+    {% if busquedas %}<table class="pu-tabla"><tbody>{% for b in busquedas %}<tr><td>{{ b.busqueda }}</td><td class="n">{{ b.total }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="pu-vacio">Sin búsquedas.</p>{% endif %}</section>
+  <section class="pu-card"><h2>Desde dónde se conecta</h2><p class="pu-sub">IP, dispositivo y navegador</p>
+    {% if conexiones %}<div class="pu-scroll"><table class="pu-tabla"><thead><tr><th>IP</th><th>Dispositivo</th><th class="n">Páginas</th><th>Última vez</th></tr></thead><tbody>{% for c in conexiones %}<tr><td>{{ c.ip|default:"—" }}</td><td>{{ c.dispositivo|capfirst }} · {{ c.navegador }}</td><td class="n">{{ c.total }}</td><td>{{ c.ultima|date:"d/m H:i" }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<p class="pu-vacio">Sin datos.</p>{% endif %}</section>
+</div>
+
+<div class="pu-grid">
+  <section class="pu-card"><h2>Últimas 50 páginas</h2>
+    <div class="pu-scroll"><table class="pu-tabla"><thead><tr><th>Fecha</th><th>Sección</th><th>Detalle</th></tr></thead><tbody>{% for v in recientes %}<tr><td>{{ v.fecha|date:"d/m H:i" }}</td><td>{{ v.get_seccion_display }}</td><td>{% if v.noticia %}{{ v.noticia.titulo|truncatechars:70 }}{% elif v.busqueda %}“{{ v.busqueda }}”{% else %}{{ v.ruta }}{% endif %}</td></tr>{% empty %}<tr><td colspan="3" class="pu-vacio">Sin actividad.</td></tr>{% endfor %}</tbody></table></div></section>
+  <section class="pu-card"><h2>Ingresos y salidas</h2>
+    <div class="pu-scroll"><table class="pu-tabla"><thead><tr><th>Fecha</th><th>Evento</th><th>Desde</th></tr></thead><tbody>{% for a in accesos %}<tr><td>{{ a.fecha|date:"d/m H:i" }}</td><td>{% if a.tipo == "fallido" or a.tipo == "bloqueado" %}<span class="pu-st critical">{{ a.get_tipo_display }}</span>{% else %}{{ a.get_tipo_display }}{% endif %}{% if a.detalle %}<br><small>{{ a.detalle }}</small>{% endif %}</td><td>{{ a.ip|default:"—" }}<br><small>{{ a.navegador }}</small></td></tr>{% empty %}<tr><td colspan="3" class="pu-vacio">Sin registros.</td></tr>{% endfor %}</tbody></table></div></section>
+  {% if ultimos_copys %}<section class="pu-card"><h2>Copys generados</h2><table class="pu-tabla"><tbody>{% for c in ultimos_copys %}<tr><td>{{ c.creado|date:"d/m H:i" }}</td><td>{{ c.noticia.titulo|default:"(noticia eliminada)"|truncatechars:60 }}</td></tr>{% endfor %}</tbody></table></section>{% endif %}
+</div>
+{% endblock %}

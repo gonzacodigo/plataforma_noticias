@@ -1,0 +1,3 @@
+{% if serie %}<div class="pu-cols" role="img" aria-label="{{ titulo }}">{% for p in serie %}<div class="pu-col" tabindex="0" data-tip="{{ p.etiqueta }}: {{ p.valor }} {{ unidad }}"><i style="height:{{ p.pct|stringformat:'s' }}%"></i></div>{% endfor %}</div>
+<div class="pu-ejes" aria-hidden="true">{% for p in serie %}<span>{% if p.mostrar %}{{ p.etiqueta }}{% endif %}</span>{% endfor %}</div>
+<details><summary>Ver como tabla</summary><table class="pu-tabla"><thead><tr><th>{{ eje }}</th><th class="n">{{ unidad|capfirst }}</th></tr></thead><tbody>{% for p in serie %}<tr><td>{{ p.etiqueta }}</td><td class="n">{{ p.valor }}</td></tr>{% endfor %}</tbody></table></details>{% endif %}

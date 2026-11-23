@@ -1,0 +1,74 @@
+{% extends "admin/base_site.html" %}
+{% block extrastyle %}{{ block.super }}{% include "admin/cuentas/_estilos.html" %}{% endblock %}
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Inicio</a> › Panel de uso</div>{% endblock %}
+{% block content %}
+<nav class="pu-periodo" aria-label="Período">
+  <span>Período:</span>
+  {% for p in periodos %}<a href="?dias={{ p }}" {% if p == dias %}aria-current="true"{% endif %}>Últimos {{ p }} días</a>{% endfor %}
+</nav>
+
+<div class="pu-kpis">
+  <div class="pu-kpi"><span>Usuarios activos hoy</span><b>{{ kpis.activos_hoy }}</b><small>de {{ kpis.usuarios_total }} usuarios cliente</small></div>
+  <div class="pu-kpi"><span>Activos en el período</span><b>{{ kpis.activos_periodo }}</b><small>usaron la plataforma al menos una vez</small></div>
+  <div class="pu-kpi"><span>Páginas vistas</span><b>{{ kpis.visitas }}</b><small>{{ kpis.visitas_dia }} por día en promedio</small></div>
+  <div class="pu-kpi"><span>Copys con IA</span><b>{{ kpis.copys }}</b><small>{{ kpis.tokens }} tokens consumidos</small></div>
+  <div class="pu-kpi"><span>Clientes con acceso</span><b>{{ estados.activo|add:estados.por_vencer }}</b><small>{{ estados.por_vencer }} vencen en {{ dias_aviso }} días · {{ estados.vencido|add:estados.suspendido }} sin acceso</small></div>
+  <div class="pu-kpi"><span>Ingreso mensual estimado</span><b>$ {{ kpis.ingreso_mensual|floatformat:"0g" }}</b><small>suma de clientes con acceso</small></div>
+  <div class="pu-kpi"><span>Ingresos fallidos (24 h)</span><b>{{ kpis.fallidos_24h }}</b><small><a href="{% url 'admin:cuentas_acceso_changelist' %}?tipo__exact=fallido">ver detalle</a></small></div>
+</div>
+
+{% if alertas %}<h2>Para revisar</h2><ul class="pu-alertas">{% for nivel, texto in alertas %}<li class="{{ nivel }}"><b>{% if nivel == "critical" %}Urgente{% elif nivel == "serious" %}Atención{% else %}Aviso{% endif %}</b>{{ texto }}</li>{% endfor %}</ul>{% endif %}
+
+<div class="pu-grid">
+  <section class="pu-card pu-wide">
+    <h2>Páginas vistas por día</h2><p class="pu-sub">Todos los usuarios cliente · pasá el cursor por una barra para ver el valor</p>
+    {% include "admin/cuentas/_columnas.html" with serie=serie_diaria titulo="Páginas vistas por día" eje="Día" unidad="páginas vistas" %}
+  </section>
+  <section class="pu-card">
+    <h2>Uso por sección</h2><p class="pu-sub">Páginas vistas en el período</p>
+    {% include "admin/cuentas/_barras.html" with filas=secciones %}
+  </section>
+  <section class="pu-card">
+    <h2>Horario de uso</h2><p class="pu-sub">Páginas vistas según la hora del día</p>
+    {% include "admin/cuentas/_columnas.html" with serie=serie_horaria titulo="Páginas vistas por hora" eje="Hora" unidad="páginas vistas" %}
+  </section>
+  <section class="pu-card">
+    <h2>Medios más leídos</h2><p class="pu-sub">Noticias abiertas por medio</p>
+    {% include "admin/cuentas/_barras.html" with filas=medios %}
+  </section>
+  <section class="pu-card">
+    <h2>Dispositivos</h2><p class="pu-sub">Páginas vistas por tipo de dispositivo</p>
+    {% if dispositivos %}<table class="pu-tabla"><tbody>{% for d in dispositivos %}<tr><td>{{ d.dispositivo|capfirst }}</td><td class="n">{{ d.total }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="pu-vacio">Sin datos en el período.</p>{% endif %}
+  </section>
+</div>
+
+<section class="pu-card pu-wide" style="margin-bottom:24px">
+  <h2>Usuarios</h2><p class="pu-sub">Ordenados por última actividad. "Días activos" cuenta los días con al menos una visita en el período.</p>
+  <div class="pu-scroll"><table class="pu-tabla">
+    <thead><tr><th>Usuario</th><th>Cliente</th><th>Estado</th><th>Último ingreso</th><th>Última actividad</th><th class="n">Días activos</th><th class="n">Páginas</th><th class="n">Por día activo</th><th>Sección favorita</th><th class="n">Copys IA</th><th class="n">IP distintas</th><th class="n">Sesiones</th></tr></thead>
+    <tbody>{% for f in filas %}<tr>
+      <td><a href="{% url 'panel_usuario' f.usuario.pk %}?dias={{ dias }}">{{ f.usuario.username }}</a>{% if not f.usuario.is_active %} (desactivado){% endif %}</td>
+      <td>{% if f.cliente %}<a href="{% url 'admin:cuentas_cliente_change' f.cliente.pk %}">{{ f.cliente }}</a>{% else %}<span class="pu-st warning">Sin cliente</span>{% endif %}</td>
+      <td>{% if f.cliente %}{% with e=f.cliente.estado %}<span class="pu-st {% if e == 'activo' %}good{% elif e == 'por_vencer' %}warning{% else %}critical{% endif %}">{% if e == 'activo' %}Activo{% elif e == 'por_vencer' %}Vence pronto{% elif e == 'vencido' %}Vencido{% else %}Suspendido{% endif %}</span>{% endwith %}{% else %}—{% endif %}</td>
+      <td>{{ f.ultimo_ingreso|date:"d/m/Y H:i"|default:"Nunca" }}</td>
+      <td>{% if f.inactivo %}<span class="pu-st warning">{{ f.ultima_actividad|date:"d/m/Y H:i"|default:"Sin uso" }}</span>{% else %}{{ f.ultima_actividad|date:"d/m/Y H:i" }}{% endif %}</td>
+      <td class="n">{{ f.dias_activos }}</td><td class="n">{{ f.visitas }}</td><td class="n">{{ f.promedio }}</td>
+      <td>{{ f.favorita }}</td><td class="n">{{ f.copys }}</td>
+      <td class="n">{% if f.compartida %}<span class="pu-st serious">{{ f.ips }}</span>{% else %}{{ f.ips }}{% endif %}</td>
+      <td class="n">{{ f.sesiones }}</td>
+    </tr>{% empty %}<tr><td colspan="12" class="pu-vacio">Todavía no hay usuarios cliente. Creá un cliente y asignale usuarios.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+
+<div class="pu-grid">
+  <section class="pu-card">
+    <h2>Búsquedas más frecuentes</h2><p class="pu-sub">Lo que buscan tus clientes</p>
+    {% if busquedas %}<table class="pu-tabla"><thead><tr><th>Búsqueda</th><th class="n">Veces</th><th class="n">Usuarios</th></tr></thead><tbody>{% for b in busquedas %}<tr><td>{{ b.busqueda }}</td><td class="n">{{ b.total }}</td><td class="n">{{ b.usuarios }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="pu-vacio">Sin búsquedas en el período.</p>{% endif %}
+  </section>
+  <section class="pu-card">
+    <h2>Noticias más leídas</h2><p class="pu-sub">Por usuarios cliente</p>
+    {% if noticias %}<table class="pu-tabla"><thead><tr><th>Noticia</th><th class="n">Lecturas</th><th class="n">Usuarios</th></tr></thead><tbody>{% for n in noticias %}<tr><td><a href="{% url 'noticia_app:noticia_detail' n.noticia__id %}" target="_blank" rel="noopener">{{ n.noticia__titulo|truncatechars:80 }}</a><br><small>{{ n.noticia__medio__nombre }}</small></td><td class="n">{{ n.total }}</td><td class="n">{{ n.usuarios }}</td></tr>{% endfor %}</tbody></table>{% else %}<p class="pu-vacio">Sin lecturas en el período.</p>{% endif %}
+  </section>
+</div>
+<p><a href="{% url 'admin:cuentas_visita_changelist' %}">Ver todas las visitas</a> · <a href="{% url 'admin:cuentas_acceso_changelist' %}">Ver ingresos y salidas</a> · <a href="{% url 'admin:cuentas_cliente_changelist' %}">Gestionar clientes</a></p>
+{% endblock %}
