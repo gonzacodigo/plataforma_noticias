@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.signals import (
     user_logged_in,
     user_logged_out,
@@ -17,6 +18,15 @@ def al_ingresar(sender, request, user, **kwargs):
     Perfil.objects.filter(usuario=user).update(
         sesion_actual=huella_sesion(request.session.session_key)
     )
+    messages.success(request, mensaje_bienvenida(user), fail_silently=True)
+
+
+def mensaje_bienvenida(user):
+    usuario = user.get_username()
+    nombre = user.first_name.strip()
+    if nombre and nombre.lower() != usuario.lower():
+        return f"¡Te damos la bienvenida, {nombre}! Ingresaste como {usuario}."
+    return f"¡Te damos la bienvenida, {usuario}!"
 
 
 @receiver(user_logged_out)

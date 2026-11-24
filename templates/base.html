@@ -8,12 +8,13 @@
 {% block social %}<meta property="og:title" content="Desenchufadas · Espectáculos y entrevistas"><meta property="og:description" content="Espectáculos, entrevistas y las historias que dan para hablar."><meta property="og:type" content="website"><meta property="og:image" content="{{ social_image }}">{% endblock %}
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="{% static 'img/brand-mark.svg' %}" type="image/svg+xml">
-<link rel="stylesheet" href="{% static 'css/desenchufadas.css' %}?v=tendencias-20261123">
+<link rel="stylesheet" href="{% static 'css/desenchufadas.css' %}?v=bienvenida-20261124">
 <script src="{% static 'js/app.js' %}" defer></script>
 </head><body>
 <a class="skip-link" href="#contenido">Saltar al contenido</a>
-<div class="topline"><span>EL ESPECTÁCULO SE VIVE DE CERCA</span><a href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer">@desenchufadas.ok ↗</a></div>
+<div class="topline">{% if user.is_authenticated %}<span class="topline-user">Sesión: <strong>{{ user.get_username }}</strong></span>{% else %}<span>EL ESPECTÁCULO SE VIVE DE CERCA</span>{% endif %}<a href="{{ instagram_url }}" target="_blank" rel="noopener noreferrer">@desenchufadas.ok ↗</a></div>
 {% include 'includes/header.html' %}
+{% block mensajes %}{% if messages %}<div class="site-messages wrap" role="status">{% for message in messages %}<p class="site-message{% if message.tags %} {{ message.tags }}{% endif %}">{{ message }}</p>{% endfor %}</div>{% endif %}{% endblock %}
 <main id="contenido">{% block content %}{% endblock %}</main>
 {% include 'includes/footer.html' %}
 <div id="notification" class="toast" role="status" hidden></div>

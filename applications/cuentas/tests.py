@@ -99,6 +99,39 @@ class LoginObligatorioTests(BaseTests):
         self.assertContains(response, "/buscador-imagenes")
         self.assertContains(response, "Salir")
 
+    def test_bienvenida_y_usuario_visible_al_ingresar(self):
+        user = crear_usuario("JuanArce")
+        user.first_name = "Juan"
+        user.save()
+        response = ingresar(self.client, "JuanArce")
+        self.assertRedirects(response, "/", fetch_redirect_response=False)
+        response = self.client.get("/")
+        self.assertContains(
+            response, "¡Te damos la bienvenida, Juan! Ingresaste como JuanArce."
+        )
+        self.assertContains(response, "Sesión: <strong>JuanArce</strong>", html=False)
+        # La bienvenida se muestra una sola vez; el usuario queda siempre visible.
+        response = self.client.get("/instagram-views")
+        self.assertNotContains(response, "Te damos la bienvenida")
+        self.assertContains(response, "Sesión: <strong>JuanArce</strong>", html=False)
+
+    def test_bienvenida_sin_nombre_usa_el_usuario(self):
+        crear_usuario("Camialexan")
+        ingresar(self.client, "Camialexan")
+        self.assertContains(self.client.get("/"), "¡Te damos la bienvenida, Camialexan!")
+
+    def test_anonimo_no_ve_sesion(self):
+        response = self.client.get("/")
+        self.assertNotContains(response, "Sesión:")
+        self.assertContains(response, "EL ESPECTÁCULO SE VIVE DE CERCA")
+
+    def test_bloqueado_no_recibe_bienvenida(self):
+        crear_usuario(activo=False)
+        response = ingresar(self.client)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Te damos la bienvenida")
+        self.assertNotContains(self.client.get("/"), "Te damos la bienvenida")
+
     def test_usuario_bloqueado_en_la_vidriera_es_desconectado(self):
         user = crear_usuario(activo=False)
         self.client.force_login(user)
