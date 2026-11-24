@@ -136,6 +136,12 @@ CACHES = {
 }
 SCRAPE_MAX_ARTICLES = int(os.environ.get("SCRAPE_MAX_ARTICLES", "30"))
 SCRAPE_BUDGET_SECONDS = int(os.environ.get("SCRAPE_BUDGET_SECONDS", "90"))
+# Poda automática: al llegar a NOTICIAS_MAXIMO se borran las más viejas hasta
+# dejar NOTICIAS_CONSERVAR (ver applications/noticia/services/limpieza.py).
+NOTICIAS_MAXIMO = int(os.environ.get("NOTICIAS_MAXIMO", "100000"))
+NOTICIAS_CONSERVAR = int(os.environ.get("NOTICIAS_CONSERVAR", "50000"))
+# Tiempo máximo de borrado por corrida; si no alcanza, sigue en la próxima.
+NOTICIAS_PODA_SEGUNDOS = int(os.environ.get("NOTICIAS_PODA_SEGUNDOS", "300"))
 # Notas máximas por medio leído por RSS en cada actualización.
 FEED_MAX_ITEMS = int(os.environ.get("FEED_MAX_ITEMS", "60"))
 LOGIN_URL = "noticia_app:ingresar"

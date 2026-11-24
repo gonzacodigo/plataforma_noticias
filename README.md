@@ -34,6 +34,16 @@ La Nación (general), Perfil, Página/12, C5N y Ámbito se descubren por RSS o s
 
 Al final de cada `actualizar_noticias` (y con `python manage.py calcular_tendencias`) se agrupan las notas de las últimas 36 horas que cuentan la misma historia en distintos medios (`applications/tendencias/motor.py`: títulos y comienzo de la bajada, palabras ponderadas por rareza). Un grupo es tendencia si lo publicaron al menos 3 medios distintos en Espectáculos, o 4 en el resto de las categorías (`TENDENCIAS_MIN_MEDIOS_GENERAL`). Su puntaje suma los medios (lo principal), las notas y las lecturas de clientes, y se reduce a la mitad cada 12 horas. Su título es el de la nota que un medio publicó primero. Una falla en este cálculo no detiene la ingesta. La portada, sin filtros, muestra públicamente dos apartados: el top 3 de Espectáculos y el top 3 de General (todas las demás categorías juntas), y `/tendencia/<id>/` muestra solo a clientes cómo contó cada medio la historia. Desde Administración › Tendencias se puede ocultar una tendencia mal agrupada. Ajustes: `TENDENCIAS_VENTANA_HORAS`, `TENDENCIAS_MIN_MEDIOS`, `TENDENCIAS_UMBRAL` y `TENDENCIAS_POR_CATEGORIA`.
 
+## Poda automática de noticias
+
+Al final de cada `actualizar_noticias` se cuenta la tabla de noticias. Si llega a `NOTICIAS_MAXIMO` (100.000 por defecto), se borran las más viejas por fecha de publicación hasta dejar `NOTICIAS_CONSERVAR` (50.000 por defecto). Se borran en tandas de 1.000.
+
+- **Con cada nota se borran** sus imágenes y sus enlaces históricos.
+- **Se conservan** las visitas, los copys y las tendencias: quedan sin el enlace a la nota.
+- **Nunca se borran** las notas de tendencias activas.
+- **Tiempo máximo por corrida:** `NOTICIAS_PODA_SEGUNDOS` (300 por defecto). Si no termina, sigue en la próxima corrida.
+- **Para revisar a mano:** `python manage.py podar_noticias --simular` muestra qué borraría.
+
 ## Producción
 
 Configurar `DJANGO_SETTINGS_MODULE=noticias.settings.prod`, una clave aleatoria de al menos 50 caracteres y credenciales PostgreSQL. No usar `secret.json`; está excluido de Git. WSGI y ASGI seleccionan producción explícitamente. Ejecutar `python manage.py check --deploy --settings=noticias.settings.prod` y `python manage.py collectstatic --noinput --settings=noticias.settings.prod`.

@@ -74,6 +74,7 @@ class Command(BaseCommand):
                 f"{result['skipped']} omitidas ({result['status']})"
             )
         self.actualizar_tendencias()
+        self.podar()
         if failures:
             raise CommandError("Fallaron fuentes: " + ", ".join(failures))
 
@@ -88,3 +89,19 @@ class Command(BaseCommand):
             self.stderr.write("tendencias: no se pudieron calcular. Revisa el registro.")
             return
         self.stdout.write(f"tendencias: {r['activas']} activas ({r['nuevas']} nuevas)")
+
+    def podar(self):
+        from applications.noticia.services.limpieza import podar_noticias
+
+        try:
+            r = podar_noticias()
+        except Exception:
+            # La poda tampoco debe frenar la ingesta: se reintenta en la próxima corrida.
+            logger.exception("No se pudo podar la tabla de noticias")
+            self.stderr.write("poda: no se pudo completar. Revisa el registro.")
+            return
+        if r["borradas"]:
+            self.stdout.write(
+                f"poda: {r['borradas']} noticias viejas borradas"
+                + ("" if r["completa"] else " (sigue en la próxima corrida)")
+            )
