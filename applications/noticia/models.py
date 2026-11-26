@@ -111,13 +111,34 @@ class NoticiaAlias(models.Model):
     )
 
 
-class CopyGenerado(models.Model):
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="copys"
-    )
+TIPOS_IA = [
+    ("resumen", "Resumen de la nota"),
+    ("copy", "Copy para redes"),
+    ("guion", "Guion para reel"),
+    ("resumen_tendencia", "Resumen de la tendencia"),
+]
+
+
+class GeneracionIA(models.Model):
+    """Un texto que generó la API de verdad.
+
+    Se reparte a otros clientes que piden lo mismo, así cada nota paga una sola
+    llamada por formato. La huella cambia si cambia el contenido de origen (por
+    ejemplo, si a una tendencia se le suman notas) y obliga a generar de nuevo.
+    """
+
+    tipo = models.CharField(max_length=20, choices=TIPOS_IA)
     noticia = models.ForeignKey(
-        Noticia, on_delete=models.SET_NULL, null=True, related_name="copys"
+        Noticia, on_delete=models.CASCADE, null=True, blank=True, related_name="generaciones_ia"
     )
+    tendencia = models.ForeignKey(
+        "tendencias.Tendencia",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="generaciones_ia",
+    )
+    huella = models.CharField(max_length=64)
     texto = models.TextField()
     modelo = models.CharField(max_length=60)
     tokens_entrada = models.PositiveIntegerField(default=0)
@@ -126,6 +147,51 @@ class CopyGenerado(models.Model):
 
     class Meta:
         ordering = ["-creado"]
+        verbose_name = "generación con IA"
+        verbose_name_plural = "generaciones con IA"
+        indexes = [
+            models.Index(fields=["tipo", "noticia", "huella"], name="genia_noticia_idx"),
+            models.Index(fields=["tipo", "tendencia", "huella"], name="genia_tendencia_idx"),
+        ]
+
+    def __str__(self):
+        return f"{self.get_tipo_display()} ({self.creado:%d/%m/%Y %H:%M})"
+
+
+class CopyGenerado(models.Model):
+    """Lo que recibió cada usuario: cuenta para su límite y guarda sus cambios."""
+
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="copys"
+    )
+    tipo = models.CharField(max_length=20, choices=TIPOS_IA, default="copy")
+    noticia = models.ForeignKey(
+        Noticia, on_delete=models.SET_NULL, null=True, related_name="copys"
+    )
+    tendencia = models.ForeignKey(
+        "tendencias.Tendencia",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="copys",
+    )
+    generacion = models.ForeignKey(
+        GeneracionIA, on_delete=models.SET_NULL, null=True, blank=True, related_name="entregas"
+    )
+    reutilizada = models.BooleanField(
+        default=False, help_text="Se entregó una generación existente, sin llamar a la API."
+    )
+    texto = models.TextField(help_text="Versión del usuario, con sus cambios.")
+    editado = models.DateTimeField(null=True, blank=True)
+    modelo = models.CharField(max_length=60)
+    tokens_entrada = models.PositiveIntegerField(default=0)
+    tokens_salida = models.PositiveIntegerField(default=0)
+    creado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-creado"]
+        verbose_name = "generación entregada"
+        verbose_name_plural = "generaciones entregadas"
         indexes = [
             models.Index(fields=["usuario", "creado"], name="copy_usuario_creado_idx")
         ]

@@ -1,7 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 from applications.cuentas.forms import IngresoForm
-from . import views
+from . import herramientas_ia, views
 
 app_name = "noticia_app"
 urlpatterns = [
@@ -24,10 +24,17 @@ urlpatterns = [
         name="noticia_detail",
     ),
     path(
+        "detail-noticia/<int:pk>/ia/<slug:tipo>/",
+        herramientas_ia.GenerarIANoticiaView.as_view(),
+        name="generar_ia",
+    ),
+    # Dirección anterior del copy: sigue andando para páginas que quedaron abiertas.
+    path(
         "detail-noticia/<int:pk>/generar-copy/",
-        views.GenerarCopyView.as_view(),
+        herramientas_ia.GenerarIANoticiaView.as_view(),
         name="generar_copy",
     ),
+    path("ia/<int:pk>/guardar/", herramientas_ia.GuardarIAView.as_view(), name="guardar_ia"),
     path(
         "ingresar/",
         auth_views.LoginView.as_view(

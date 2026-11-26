@@ -22,7 +22,7 @@ from .models import (
     CopyGenerado,
     NoticiaAlias,
 )
-from .services.copy_ia import generar_copy, CopyIAError
+from .services.ia import generar_copy, CopyIAError
 from .services.engine import (
     parse_date,
     canonical_url,
@@ -695,13 +695,13 @@ class CopyIAServiceTests(SimpleTestCase):
         )
 
     def mock_create(self, cls, response=None, error=None):
-        create = cls.return_value.beta.messages.create
+        create = cls.return_value.messages.create
         create.return_value = response or respuesta_claude()
         create.side_effect = error
         return create
 
     def test_request_and_parsed_result(self):
-        with patch("applications.noticia.services.copy_ia.anthropic.Anthropic") as cls:
+        with patch("applications.noticia.services.ia.anthropic.Anthropic") as cls:
             create = self.mock_create(cls)
             result = generar_copy(self.noticia)
         self.assertEqual(result["texto"], "¡Volvió con todo! 💃\n#Show")
@@ -710,18 +710,18 @@ class CopyIAServiceTests(SimpleTestCase):
             (result["tokens_entrada"], result["tokens_salida"]), (180, 240)
         )
         kwargs = create.call_args.kwargs
-        self.assertEqual(kwargs["model"], "claude-opus-5-5")
-        self.assertEqual(kwargs["fallbacks"], "default")
+        self.assertEqual(kwargs["model"], "claude-haiku-5-5")
+        self.assertNotIn("fallbacks", kwargs)  # Haiku no tiene respaldo del servidor.
         prompt = kwargs["messages"][0]["content"]
         self.assertIn("Carmen Barbieri volvió al escenario", prompt)
         self.assertIn("Primer párrafo\nSegundo párrafo", prompt)
 
     def test_long_article_is_bounded(self):
         self.noticia.contenido = "x" * 20000
-        with patch("applications.noticia.services.copy_ia.anthropic.Anthropic") as cls:
+        with patch("applications.noticia.services.ia.anthropic.Anthropic") as cls:
             create = self.mock_create(cls)
             generar_copy(self.noticia)
-        self.assertLess(len(create.call_args.kwargs["messages"][0]["content"]), 4200)
+        self.assertLess(len(create.call_args.kwargs["messages"][0]["content"]), 6400)
 
     def test_refusal_and_empty_are_errors(self):
         for response in [
@@ -729,7 +729,7 @@ class CopyIAServiceTests(SimpleTestCase):
             respuesta_claude("  "),
         ]:
             with patch(
-                "applications.noticia.services.copy_ia.anthropic.Anthropic"
+                "applications.noticia.services.ia.anthropic.Anthropic"
             ) as cls:
                 self.mock_create(cls, response)
                 with self.assertRaises(CopyIAError):
@@ -745,7 +745,7 @@ class CopyIAServiceTests(SimpleTestCase):
         ]
         for error in errors:
             with patch(
-                "applications.noticia.services.copy_ia.anthropic.Anthropic"
+                "applications.noticia.services.ia.anthropic.Anthropic"
             ) as cls:
                 self.mock_create(cls, error=error)
                 with self.assertRaises(CopyIAError):
@@ -772,7 +772,7 @@ class CopyIAViewTests(TestCase):
         }
 
     def test_anonymous_cannot_generate(self):
-        with patch("applications.noticia.views.generar_copy") as generar:
+        with patch("applications.noticia.services.ia.generar") as generar:
             self.assertEqual(self.client.post(self.url).status_code, 403)
             generar.assert_not_called()
 
@@ -783,18 +783,19 @@ class CopyIAViewTests(TestCase):
     def test_requires_csrf(self):
         client = Client(enforce_csrf_checks=True)
         client.force_login(self.user)
-        with patch("applications.noticia.views.generar_copy") as generar:
+        with patch("applications.noticia.services.ia.generar") as generar:
             self.assertEqual(client.post(self.url).status_code, 403)
             generar.assert_not_called()
 
     def test_generates_and_records_usage(self):
         self.client.force_login(self.user)
         with patch(
-            "applications.noticia.views.generar_copy", return_value=self.resultado
+            "applications.noticia.services.ia.generar", return_value=self.resultado
         ):
             response = self.client.post(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"copy": "Copy de prueba", "restantes": 2})
+        self.assertEqual(response.json()["texto"], "Copy de prueba")
+        self.assertEqual(response.json()["restantes"], 2)
         record = CopyGenerado.objects.get()
         self.assertEqual((record.usuario, record.noticia), (self.user, self.news))
         self.assertEqual((record.tokens_entrada, record.tokens_salida), (100, 50))
@@ -802,7 +803,7 @@ class CopyIAViewTests(TestCase):
     def test_monthly_limit(self):
         self.client.force_login(self.user)
         with patch(
-            "applications.noticia.views.generar_copy", return_value=self.resultado
+            "applications.noticia.services.ia.generar", return_value=self.resultado
         ) as generar:
             statuses = [self.client.post(self.url).status_code for _ in range(4)]
         self.assertEqual(statuses, [200, 200, 200, 429])
@@ -821,7 +822,7 @@ class CopyIAViewTests(TestCase):
     def test_api_failure_is_not_recorded(self):
         self.client.force_login(self.user)
         with patch(
-            "applications.noticia.views.generar_copy", side_effect=CopyIAError("x")
+            "applications.noticia.services.ia.generar", side_effect=CopyIAError("x")
         ):
             response = self.client.post(self.url)
         self.assertEqual(response.status_code, 502)
@@ -838,7 +839,7 @@ class CopyIAViewTests(TestCase):
         self.client.force_login(self.user)
         self.assertEqual(self.client.post(self.url).status_code, 503)
         self.assertNotContains(
-            self.client.get(self.news.get_absolute_url()), "Generá un copy con IA"
+            self.client.get(self.news.get_absolute_url()), "data-ia-form"
         )
 
     def test_detail_requires_login_and_shows_button(self):
@@ -848,8 +849,8 @@ class CopyIAViewTests(TestCase):
         )
         self.client.force_login(self.user)
         response = self.client.get(self.news.get_absolute_url())
-        self.assertContains(response, "data-copy-ia")
-        self.assertContains(response, "Te quedan 3 este mes.")
+        self.assertContains(response, "data-ia-form", count=3)
+        self.assertContains(response, "Te quedan 3 generaciones este mes.")
 
     def test_login_and_logout(self):
         self.assertEqual(self.client.get("/ingresar/").status_code, 200)

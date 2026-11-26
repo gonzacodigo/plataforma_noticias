@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Noticia, Categoria, NoticiaImagen, ScrapeRun, CopyGenerado
+from .models import Noticia, Categoria, NoticiaImagen, ScrapeRun, CopyGenerado, GeneracionIA
 
 
 class NoticiaImagenInline(admin.TabularInline):
@@ -45,11 +45,37 @@ class ScrapeRunAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(GeneracionIA)
+class GeneracionIAAdmin(admin.ModelAdmin):
+    """Cada llamada real a la API. Las entregas muestran cuántas veces se reutilizó."""
+
+    list_display = ("tipo", "noticia", "tendencia", "modelo", "tokens_entrada", "tokens_salida", "veces_entregada", "creado")
+    list_filter = ("tipo", "modelo")
+    list_select_related = ("noticia", "tendencia")
+    readonly_fields = [f.name for f in GeneracionIA._meta.fields]
+    date_hierarchy = "creado"
+
+    def get_queryset(self, request):
+        from django.db.models import Count
+
+        return super().get_queryset(request).annotate(n_entregas=Count("entregas"))
+
+    @admin.display(description="entregas", ordering="n_entregas")
+    def veces_entregada(self, obj):
+        return obj.n_entregas
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
 @admin.register(CopyGenerado)
 class CopyGeneradoAdmin(admin.ModelAdmin):
-    list_display = ("usuario", "noticia", "modelo", "tokens_entrada", "tokens_salida", "creado")
-    list_filter = ("usuario", "modelo")
-    list_select_related = ("usuario", "noticia")
+    list_display = ("usuario", "tipo", "noticia", "tendencia", "reutilizada", "editado", "modelo", "tokens_entrada", "tokens_salida", "creado")
+    list_filter = ("tipo", "reutilizada", "usuario", "modelo")
+    list_select_related = ("usuario", "noticia", "tendencia")
     readonly_fields = [f.name for f in CopyGenerado._meta.fields]
     date_hierarchy = "creado"
 

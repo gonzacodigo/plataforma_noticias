@@ -1,4 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.views import View
 from django.views.generic import DetailView
+from applications.noticia import herramientas_ia
 from .models import Tendencia
 
 
@@ -18,4 +23,24 @@ class TendenciaDetalleView(DetailView):
             .defer("contenido")
             .order_by("fecha", "fecha_ingesta", "id")
         )
+        tendencia = self.object
+        context.update(
+            herramientas_ia.contexto(
+                self.request.user,
+                ("resumen_tendencia",),
+                lambda tipo: reverse("tendencias:generar_resumen", args=[tendencia.pk]),
+                tendencia=tendencia,
+            )
+        )
         return context
+
+
+class GenerarResumenTendenciaView(LoginRequiredMixin, View):
+    """Resumen de varias fuentes: herramienta paga (cuenta para el límite)."""
+
+    http_method_names = ["post"]
+    raise_exception = True
+
+    def post(self, request, pk):
+        tendencia = get_object_or_404(Tendencia, pk=pk, oculta=False)
+        return herramientas_ia.responder(request, "resumen_tendencia", tendencia=tendencia)

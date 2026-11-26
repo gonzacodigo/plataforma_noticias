@@ -262,7 +262,7 @@ class RegistroActividadTests(BaseTests):
 
     def test_registra_copy_ia(self):
         resultado = {"texto": "Copy", "modelo": "m", "tokens_entrada": 1, "tokens_salida": 1}
-        with patch("applications.noticia.views.generar_copy", return_value=resultado):
+        with patch("applications.noticia.services.ia.generar", return_value=resultado):
             self.client.post(f"/detail-noticia/{self.noticia.pk}/generar-copy/")
         self.assertTrue(Visita.objects.filter(seccion="copy_ia", noticia=self.noticia).exists())
 
@@ -296,7 +296,7 @@ class LimiteCopysTests(BaseTests):
         self.client.force_login(user)
         url = f"/detail-noticia/{self.noticia.pk}/generar-copy/"
         resultado = {"texto": "Copy", "modelo": "m", "tokens_entrada": 1, "tokens_salida": 1}
-        with patch("applications.noticia.views.generar_copy", return_value=resultado):
+        with patch("applications.noticia.services.ia.generar", return_value=resultado):
             respuestas = [self.client.post(url) for _ in range(2)]
         self.assertEqual([r.status_code for r in respuestas], [200, 429])
         self.assertEqual(respuestas[0].json()["restantes"], 0)

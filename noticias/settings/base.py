@@ -161,7 +161,14 @@ TENDENCIAS_UMBRAL = float(os.environ.get("TENDENCIAS_UMBRAL", "0.22"))
 TENDENCIAS_POR_CATEGORIA = int(os.environ.get("TENDENCIAS_POR_CATEGORIA", "3"))
 # La API key la lee el SDK de Anthropic desde ANTHROPIC_API_KEY.
 COPY_IA_HABILITADO = bool(os.environ.get("ANTHROPIC_API_KEY"))
-COPY_IA_MODELO = os.environ.get("COPY_IA_MODELO", "claude-opus-5-5")
+# Modelo de las herramientas de IA: el más económico mientras rinda. Se puede
+# cambiar uno solo con IA_MODELO_RESUMEN, IA_MODELO_COPY, IA_MODELO_GUION o
+# IA_MODELO_RESUMEN_TENDENCIA (por ejemplo, claude-sonnet-5-5 para el guion).
+COPY_IA_MODELO = os.environ.get("COPY_IA_MODELO", "claude-haiku-5-5")
+IA_MODELOS = {
+    tipo: os.environ.get(f"IA_MODELO_{tipo.upper()}", "")
+    for tipo in ("resumen", "copy", "guion", "resumen_tendencia")
+}
 COPY_IA_LIMITE_MENSUAL = int(os.environ.get("COPY_IA_LIMITE_MENSUAL", "100"))
 LOGGING = {
     "version": 1,

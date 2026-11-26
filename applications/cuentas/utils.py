@@ -14,6 +14,8 @@ SECCION_POR_VISTA = {
     "noticia_app:noticia_medio": "medio",
     "noticia_app:noticia_detail": "detalle",
     "noticia_app:generar_copy": "copy_ia",
+    "noticia_app:generar_ia": "copy_ia",
+    "tendencias:generar_resumen": "copy_ia",
     "noticia_app:instagram": "comunidad",
     "noticia_app:buscador_imagenes": "imagenes",
     "tendencias:detalle": "tendencia",
@@ -163,9 +165,14 @@ def registrar_visita(request, response):
         for k in FILTROS
         if request.GET.get(k)
     }
-    noticia_id = match.kwargs.get("pk") if seccion in ("detalle", "copy_ia") else None
-    if seccion == "tendencia":
+    es_noticia = match.view_name.startswith("noticia_app:")
+    noticia_id = (
+        match.kwargs.get("pk") if es_noticia and seccion in ("detalle", "copy_ia") else None
+    )
+    if match.view_name.startswith("tendencias:"):
         filtros["tendencia"] = match.kwargs.get("pk")
+    if match.kwargs.get("tipo"):
+        filtros["formato"] = match.kwargs["tipo"]
     try:
         Visita.objects.create(
             usuario=user,

@@ -1,0 +1,24 @@
+{% if ia_habilitada %}<section class="ai-box" id="herramientas-ia" aria-labelledby="ai-title" data-ia>
+<span class="eyebrow">HERRAMIENTAS CON IA</span>
+{% if user.is_authenticated %}
+<h2 id="ai-title">{% if herramientas_ia|length > 1 %}Tu contenido, listo para publicar ✨{% else %}{{ herramientas_ia.0.titulo }} ✨{% endif %}</h2>
+<p>Todo se puede editar antes de copiarlo. Revisalo antes de publicar. <span class="ai-remaining" data-ai-remaining>{% if ia_restantes == 1 %}Te queda 1 generación este mes.{% else %}Te quedan {{ ia_restantes }} generaciones este mes.{% endif %}</span></p>
+{% if herramientas_ia|length > 1 %}<div class="ai-tabs" role="tablist" aria-label="Formatos">{% for h in herramientas_ia %}<button type="button" role="tab" id="ai-tab-{{ h.tipo }}" aria-controls="ai-panel-{{ h.tipo }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"{% if not forloop.first %} tabindex="-1"{% endif %} data-ia-tab>{{ h.titulo }}</button>{% endfor %}</div>{% endif %}
+{% for h in herramientas_ia %}<div class="ai-panel" id="ai-panel-{{ h.tipo }}"{% if herramientas_ia|length > 1 %} role="tabpanel" aria-labelledby="ai-tab-{{ h.tipo }}"{% endif %}{% if not forloop.first %} hidden{% endif %} data-ia-panel data-tipo="{{ h.tipo }}" data-guardar-url="{{ h.guardar_url }}">
+<p class="ai-desc">{{ h.descripcion }}</p>
+{% if h.desactualizada %}<p class="ai-note">Se sumaron notas nuevas a esta historia: generá el resumen otra vez para incluirlas.</p>{% endif %}
+<form method="post" action="{{ h.url }}" data-ia-form>{% csrf_token %}<input type="hidden" name="nueva" value="{% if h.entrega and not h.desactualizada %}1{% else %}0{% endif %}" data-ia-nueva><button class="button red" type="submit"{% if not ia_restantes %} disabled{% endif %} data-ia-generar>{% if h.entrega and not h.desactualizada %}Generar otra versión ✨{% else %}{{ h.generar }} ✨{% endif %}</button></form>
+<div class="ai-loading" data-ia-loading hidden role="status"><span class="ai-spinner" aria-hidden="true"></span><span data-ia-estado>Leyendo la nota…</span></div>
+<div class="ai-result" data-ia-result{% if not h.entrega %} hidden{% endif %}>
+<label for="ai-text-{{ h.tipo }}">Texto generado <span>(podés editarlo)</span></label>
+<textarea id="ai-text-{{ h.tipo }}" rows="{{ h.filas }}" data-ia-text>{{ h.entrega.texto|default:"" }}</textarea>
+<div class="ai-result-actions"><button type="button" class="button dark" data-ia-copiar>Copiar texto</button><button type="button" class="button cream" data-ia-guardar disabled>Guardar cambios</button><span class="ai-saved" data-ia-guardado aria-live="polite"></span></div>
+</div>
+<p class="form-error" role="alert" data-ia-error hidden></p>
+</div>{% endfor %}
+{% else %}
+<h2 id="ai-title">Resúmenes, copys y guiones con IA ✨</h2>
+<p>Ingresá con tu cuenta para generar contenido a partir de cada noticia.</p>
+<a class="button red" href="{% url 'noticia_app:ingresar' %}?next={{ request.path|urlencode }}">Ingresar ↗</a>
+{% endif %}
+</section>{% endif %}
