@@ -16,6 +16,8 @@ VISTAS_PUBLICAS = {
     "noticia_app:ingresar",
     "noticia_app:salir",
     "health",
+    "robots",
+    "favicon",
 }
 RUTAS_PUBLICAS = (
     "/static/",

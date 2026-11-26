@@ -196,7 +196,7 @@ class SiteTests(TestCase):
     def test_sharing_title_and_canonical(self):
         response = self.client.get(self.news.get_absolute_url())
         self.assertContains(response, "Una+noticia+especial")
-        self.assertContains(response, "https://www.desenchufadas.com/detail-noticia/")
+        self.assertContains(response, "https://desenchufadas.com/detail-noticia/")
 
     def test_anonymous_cannot_scrape(self):
         with patch("applications.noticia.views.run_source") as scrape:

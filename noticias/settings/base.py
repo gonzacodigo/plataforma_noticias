@@ -117,7 +117,7 @@ STORAGES = {
 }
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-SITE_URL = os.environ.get("SITE_URL", "https://www.desenchufadas.com").rstrip("/")
+SITE_URL = os.environ.get("SITE_URL", "https://desenchufadas.com").rstrip("/")
 INSTAGRAM_URL = "https://www.instagram.com/desenchufadas.ok/"
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAdminUser"],
